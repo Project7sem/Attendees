@@ -1,0 +1,48 @@
+{% extends "Account/base.html" %}
+{% load static %}
+
+{% block title %}
+    <title>Registration page</title>
+{% endblock title %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+    
+    <div class="form-section">
+        <h1>Register Here</h1>
+
+        <form  method="POST" class="form">{% csrf_token %}
+            
+        <div>
+            <label for="first-name">Enter your firstname</label>
+            <br />
+            <input type="text" placeholder="First Name" class="first-name" />
+        </div>
+        <br />
+        <div>
+            <label for="last-name">Enter your lastname</label>
+            <br />
+            <input type="text" placeholder="Last Name" class="last-name" />
+        </div>
+        <br />
+        <div>
+            <label for="email">Enter your email-address</label>
+            <br />
+            <input type="email" placeholder="Email" class="email" />
+        </div>
+        <br />
+        <div>
+            <label for="password">Password</label>
+            <br />
+            <input type="password" placeholder="Password" class="password" />
+        </div>
+        <br />
+        <div>
+            <button type="submit">Sign Up</button>
+        </div>
+        </form>
+        <!-- end of form of registration -->
+    <p>Already have an account? <a href="./login.html">login here</a></p> 
+    </div>
+
+{% endblock content %}
