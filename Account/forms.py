@@ -27,7 +27,7 @@ class RegistrationForm(UserCreationForm):
 
 
 # Creates Login form
-class AccountAuthenticationForm(forms.ModelForm):
+class LoginForm(forms.ModelForm):
     """
       Form for Logging in  users
     """
@@ -46,7 +46,7 @@ class AccountAuthenticationForm(forms.ModelForm):
         """
           specifying styles to fields 
         """
-        super(AccountAuthenticationForm, self).__init__(*args, **kwargs)
+        super(LoginForm, self).__init__(*args, **kwargs)
         for field in (self.fields['email'],self.fields['password']):
             field.widget.attrs.update({'class': 'form-control '})
 
