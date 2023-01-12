@@ -7,11 +7,14 @@
 
 {% block content %}
     <link rel="stylesheet" href="{% static '/css/login.css' %}">
+    {% if message %}
+        {{ message }}
+    {% endif %}
     <div class="form-section">
         <h1>Login Here</h1>
         <form action="" method ="POST" class="form">{% csrf_token %}
             {{ login_form.as_p}}
-            <button class="btn btn-success"></button>
+            <button class="btn btn-success">Login</button>
         </form>
         <!-- end of form of login -->
         <p>Doesn't have an account?<a href="./register.html">register here</a></p>
