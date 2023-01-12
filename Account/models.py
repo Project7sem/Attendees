@@ -30,6 +30,9 @@ class MyAccountManager(BaseUserManager):
         user.is_admin = True
         user.is_staff=True
         user.is_superuser=True
+        user.is_university = True 
+        user.is_colleges = True 
+        user.is_student = True
         user.save(using=self._db)
         return user
 
@@ -48,6 +51,9 @@ class CustomUser(AbstractUser):
     is_active            = models.BooleanField(default=True)
     is_staff             = models.BooleanField(default=False)
     is_superuser         = models.BooleanField(default=False)
+    is_university        = models.BooleanField(default=False)
+    is_colleges          = models.BooleanField(default=False)
+    is_student           = models.BooleanField(default=False)
 
     #Defines email is in username field.
     USERNAME_FIELD = ('email')
