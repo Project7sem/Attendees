@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 
+courses = [{'BSC CSIT': 'Bachelor in Computer Science and Information Techonology'}, 'BIM','BBA',"BCA","BIT"]
 #manager for our custom model 
 class MyAccountManager(BaseUserManager):
     """
@@ -54,6 +55,7 @@ class CustomUser(AbstractUser):
     is_university        = models.BooleanField(default=False)
     is_colleges          = models.BooleanField(default=False)
     is_student           = models.BooleanField(default=False)
+    # is_teacher           = models.BooleanField(default=False)
 
     #Defines email is in username field.
     USERNAME_FIELD = ('email')
@@ -71,5 +73,25 @@ class CustomUser(AbstractUser):
 
     def has_module_perms(self, app_label ):
         return True
+
+
+class Institute(models.Model):
+    institute_name = models.CharField(max_length=100)
+    institute_user = models.ForeignKey('CustomUser',  on_delete=models.CASCADE)
+    institute_email = models.EmailField( max_length=254)
+    phone_number =    models.DecimalField( max_digits=10, decimal_places=0)
+    location =       models.CharField(max_length=100)
+    description =    models.TextField(null=True, blank=True)
+    institute_course = models.CharField(max_length=50)
+    no_of_students = models.IntegerField(default=0)
+    no_of_teachers = models.IntegerField(default=0)
+
+class Student(models.Model):
+    pass
+
+
+class Teacher (models.Model):
+    pass 
+     
 
 

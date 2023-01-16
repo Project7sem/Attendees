@@ -11,7 +11,7 @@ def Home(request):
 
 
 
-def Registration(request):
+def StudentRegistration(request):
     context ={}
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -20,22 +20,49 @@ def Registration(request):
         confirm_password = request.POST.get("c_password")
         if password == confirm_password:
             password = make_password(password)
-            print(password)
+            reg_user = CustomUser.objects.create(email=email,username=username,password=password)
+            reg_user.is_student= True 
+            reg_user.save()
+            if reg_user:
+                context['message'] = "User regestred successfully"
+                return redirect("login")
+            else:
+                context['message']="Cannot create user"
+                return redirect('stdregister')
+
+        else:
+            context['message']="Password didn't matched try again"
+            return render(request,"Account/student_register.html", context)
+    else:
+        return render(request,"Account/student_register.html")
+
+
+def InstituteRegistration(request):
+    context ={}
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        confirm_password = request.POST.get("c_password")
+        if password == confirm_password:
+            password = make_password(password)
             reg_user = CustomUser.objects.create(email=email,username=username,password=password)
             if reg_user:
                 context['message'] = "User regestred successfully"
                 return redirect("login")
             else:
                 context['message']="Cannot create user"
-                return redirect('register')
+                return redirect('stdregister')
 
         else:
             context['message']="Password didn't matched try again"
-            return render(request,"Account/registeration.html", context)
+            return render(request,"Account/student_register.html", context)
     else:
-        return render(request,"Account/registeration.html")
+        return render(request,"Account/college_register.html")
 
 
+def Register(request):
+    return render(request, "Account/registeration.html")
 
 def Login(request):
     context ={}

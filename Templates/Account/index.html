@@ -2,8 +2,10 @@
 
 
 {% block content %}
-    {% if user.is_authenticated %}
-        <h1> Hello {{user}}</h1>
+    {% if user.is_authenticated and user.is_student %}
+        <h1> Hello student  {{user.username}}</h1>
+    {% elif user.is_authenticated and user.is_college %}
+        <h1> Hello Institute  {{user.username}}</h1>
     {% else %}
         <h1>Hello world</h1>
     {% endif %}
