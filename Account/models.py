@@ -1,12 +1,9 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.core.validators import MinValueValidator, MaxValueValidator
 
-courses = [{'BSC CSIT': 'Bachelor in Computer Science and Information Techonology'}, 'BIM','BBA',"BCA","BIT"]
 #manager for our custom model 
 class MyAccountManager(BaseUserManager):
-    """
-        This is a manager for Account class 
-    """
     # Method for  creating new user
     def create_user(self, email, username, password=None):
         if not email:
@@ -31,31 +28,29 @@ class MyAccountManager(BaseUserManager):
         user.is_admin = True
         user.is_staff=True
         user.is_superuser=True
-        user.is_university = True 
-        user.is_colleges = True 
-        user.is_student = True
         user.save(using=self._db)
         return user
 
 
-#Custom base class for email authentication
-class CustomUser(AbstractUser):   
-    """
-      Custom user class inheriting AbstractBaseUser class 
-    """
-    
-    email                = models.EmailField(verbose_name='email', max_length=60, unique=True)
-    username             = models.CharField(max_length=30,unique=True)
-    date_joined          = models.DateTimeField(verbose_name='date joined', auto_now_add=True)
-    last_login           = models.DateTimeField(verbose_name="last login", auto_now=True)
-    is_admin             = models.BooleanField(default=False)
-    is_active            = models.BooleanField(default=True)
-    is_staff             = models.BooleanField(default=False)
-    is_superuser         = models.BooleanField(default=False)
-    is_university        = models.BooleanField(default=False)
-    is_colleges          = models.BooleanField(default=False)
-    is_student           = models.BooleanField(default=False)
-    # is_teacher           = models.BooleanField(default=False)
+class Institute(models.Model):
+    name=models.CharField(max_length=50)
+    location = models.CharField(max_length=50)
+    phone = models.CharField(max_length=50)
+
+class User(AbstractBaseUser):    
+    class Roles(models.TextChoices):
+        ADMIN= 'ADMIN', 'Admin'
+        STUDENT = 'STUDENT','Student'
+        TEACHER = 'TEACHER','Teacher'  
+
+    role =  models.CharField(max_length=100, choices=Roles.choices, default=Roles.ADMIN)
+    email = models.EmailField(verbose_name='email', max_length=60, unique=True)
+    username = models.CharField(max_length=30,unique=True)
+    institute = models.ForeignKey("Institute",on_delete=models.CASCADE,blank=True, null=True)
+    is_admin = models.BooleanField(default = False)
+    is_active = models.BooleanField(default = True)
+    is_superuser = models.BooleanField(default = False)
+    is_staff = models.BooleanField(default = False)
 
     #Defines email is in username field.
     USERNAME_FIELD = ('email')
@@ -75,23 +70,106 @@ class CustomUser(AbstractUser):
         return True
 
 
-class Institute(models.Model):
-    institute_name = models.CharField(max_length=100)
-    institute_user = models.ForeignKey('CustomUser',  on_delete=models.CASCADE)
-    institute_email = models.EmailField( max_length=254)
-    phone_number =    models.DecimalField( max_digits=10, decimal_places=0)
-    location =       models.CharField(max_length=100)
-    description =    models.TextField(null=True, blank=True)
-    institute_course = models.CharField(max_length=50)
-    no_of_students = models.IntegerField(default=0)
-    no_of_teachers = models.IntegerField(default=0)
-
-class Student(models.Model):
-    pass
 
 
-class Teacher (models.Model):
-    pass 
-     
+
+class InstituteManager(models.Manager):
+    def get_queryset(self,*args, **kwargs):
+        return super().get_queryset(*args, **kwargs).filter(role=User.Roles.ADMIN)
+
+class AdminUser(User):
+    obj  = InstituteManager()
+    objects = MyAccountManager()
+
+    class Meta:
+        proxy = True
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.role = User.Roles.ADMIN
+        return super().save(*args,**kwargs)
+
+
+
+
+
+
+class TeacherManager(models.Manager):
+    def get_queryset(self,*args, **kwargs):
+        return super().get_queryset(*args, **kwargs).filter(role=User.Roles.TEACHER)
+
+
+class Teacher(User):
+    obj = TeacherManager()
+    objects = MyAccountManager()
+
+    class Meta:
+        proxy = True
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.role = User.Roles.TEACHER
+        return super().save(*args,**kwargs)
+
+
+
+
+
+class StudentManager(models.Manager):
+    def get_queryset(self,*args, **kwargs):
+        return super().get_queryset(*args, **kwargs).filter(role=User.Roles.STUDENT)
+
+class Student(User):
+    obj = StudentManager()
+    objects = MyAccountManager()
+
+    class Meta:
+        proxy = True
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.role = User.Roles.STUDENT
+        return super().save(*args,**kwargs)
+
+
+
+
+class Faculty(models.Model):
+    name = models.CharField(max_length=50)   
+
+class Courses(models.Model):
+    name = models.CharField(max_length=50)
+    faculty = models.ForeignKey("Faculty", on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return self.name
+
+class Semester(models.Model):
+    sem_name = models.CharField(max_length=100)
+    faculty = models.ForeignKey("Faculty", on_delete=models.CASCADE)
+    courses = models.ManyToManyField("Courses")
+
+
+class AdminProfile(models.Model):
+    user = models.OneToOneField("AdminUser", on_delete=models.CASCADE)
+
+
+class StudentProfile(models.Model):
+    symbol_no = models.CharField(max_length=50)
+    student = models.OneToOneField('Student', related_name='student', on_delete=models.CASCADE)
+    bio_info =  models.TextField(blank=True, null=True)
+    profile_pic = models.ImageField(upload_to='profile_pics/', height_field=170, width_field=170,blank=True, null= True)
+    faculty = models.ForeignKey('Faculty', related_name='faculty', on_delete=models.CASCADE,blank=True, null=True)
+    Batch =models.CharField(max_length=50)
+    sem = models.ForeignKey("Semester", on_delete=models.CASCADE, blank=True, null=True)
+
+class TeacherProfile(models.Model):
+    teacher = models.OneToOneField("Teacher", on_delete=models.CASCADE)
+    courses = models.ManyToManyField("Courses")
+    bio_info =  models.TextField(blank=True, null=True)
+    profile_pic = models.ImageField(upload_to='profile_pics/', height_field=170, width_field=170,blank=True, null=True)
+
+
+
 
 

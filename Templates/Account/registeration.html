@@ -9,14 +9,45 @@
     {% if message %}
         {{ message }}
     {% endif %}
-    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
     
     <div class="form-section">
         <center>
         <h1>Register Here</h1>
-        <a href="{% url 'clzregister' %}"><button class="btn btn-primary">Colleges</button></a> <a href="{% url 'stdregister' %}"><button class="btn btn-success">Student</button></a> 
+        <form  method="POST" class="form">{% csrf_token %} 
+            <div>
+                <div>
+                    <label for="institute">Institute Name</label>
+                    <br />
+                    <input type="text" placeholder="Institute Name" class="form form-control" name="institute" />
+                </div>
+                <br/>
+    
+                <label for="email">Email</label>
+                <br />
+                <input type="email" placeholder="Email" class="form form-control" name="email" />
+            </div>
+            <br />
+            <div>
+                <label for="password">Password</label>
+                <br />
+                <input type="password" placeholder="Password" class="form form-control" name='password'/>
+            </div>
+            <br />
+            <div>
+                <label for="password">Confirm Password</label>
+                <br />
+                <input type="password" placeholder="Confirm Password" class="form form-control" name='c_password' />
+            </div>
+            <br>
+            <div>
+                <button type="submit" class="btn btn-primary">Register</button>
+            </div>
+        </form>
+        
+        <br>
         <!-- end of form of registration -->
-    <p>Already have an account? <a href="{% url  'login' %}">login here</a></p>
+    <p>Already have an account? <a href="{% url  'login' %}"><button class="btn btn-success">login here</button></a></p>
 </center> 
     </div>
 
