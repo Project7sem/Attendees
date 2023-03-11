@@ -1,0 +1,44 @@
+{% extends "Account/admindash.html" %}
+{% load static %}
+
+{% block title %}
+    <title> Web cam </title>
+{% endblock title %}
+
+{% block content %}
+
+<center>
+    <video id="video" width="640" height="480" autoplay></video>
+    <br>
+    <button id="snap">Snap Photo</button>
+</center>
+
+
+<script>
+    // Access the user's camera and display the video feed
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function(stream) {
+            var video = document.querySelector('#video');
+            video.srcObject = stream;
+            video.play();
+        })
+        .catch(function(err) {
+            console.log('Error: ' + err);
+        });
+
+    // Take a snapshot of the video feed
+    var canvas = document.createElement('canvas');
+    var context = canvas.getContext('2d');
+    var video = document.querySelector('#video');
+    var snapButton = document.querySelector('#snap');
+
+    snapButton.addEventListener('click', function() {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        var dataUrl = canvas.toDataURL('image/png');
+        console.log(dataUrl);
+    });
+</script>
+
+{% endblock content %}

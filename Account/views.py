@@ -16,11 +16,14 @@ def StudentRegistration(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         username = request.POST.get("username")
+        first_name = request.POST.get("fname")
+        last_name = request.POST.get("lname")
         password = request.POST.get("password")
         confirm_password = request.POST.get("c_password")
+        print(email,username)
         if password == confirm_password:
             password = make_password(password)
-            reg_user = User.objects.create(email=email,username=username,password=password)
+            reg_user = Student.objects.create(email=email,username=username,password=password)
             reg_user.save()
             if reg_user:
                 context['message'] = "User registred successfully"
@@ -44,7 +47,7 @@ def TeacherRegistration(request):
         confirm_password = request.POST.get("c_password")
         if password == confirm_password:
             password = make_password(password)
-            reg_user = User.objects.create(email=email,username=username,password=password)
+            reg_user = Teacher.objects.create(email=email,username=username,password=password)
             reg_user.save()
             if reg_user:
                 context['message'] = "User registred successfully"
@@ -125,4 +128,10 @@ def Profile(request):
 
 def Dashboard(request):
     return render(request,"Account/dashboard.html")
+
+def Courses(request):
+    return render(request,"Account/courses.html")
+
+def Camera(request):
+    return render(request, 'Account/camera.html')
 

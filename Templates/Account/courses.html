@@ -1,0 +1,34 @@
+{% extends "Account/admindash.html" %}
+{% load static %}
+
+{% block title %}
+    <title> Courses </title>
+{% endblock title %}
+
+{% block content %}
+    {% if message %}
+        {{ message }}
+    {% endif %}
+    
+    <div class="container mt-5">
+        <h1 class="text-center mb-5">Course Details</h1>
+        <div class="row">
+          <div class="col-md-6">
+            <img src="https://via.placeholder.com/500x300" class="img-fluid mb-3" alt="Course Image">
+          </div>
+          <div class="col-md-6">
+            <h2>Course Name</h2>
+            <p>Course Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            <ul class="list-group mb-3">
+              <li class="list-group-item"><strong>Department:</strong> Computer Science</li>
+              <li class="list-group-item"><strong>Course Code:</strong> CS101</li>
+              <li class="list-group-item"><strong>Credits:</strong> 3</li>
+              <li class="list-group-item"><strong>Duration:</strong> 16 Weeks</li>
+              <li class="list-group-item"><strong>Instructor:</strong> John Doe</li>
+            </ul>
+            <a href="#" class="btn btn-primary">Enroll Now</a>
+          </div>
+        </div>
+      </div>
+
+{% endblock content %}
