@@ -6,20 +6,36 @@
 {% endblock title %}
 
 {% block content %}
-    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <style>
+    .login-form {
+      margin-top: 50px;
+    }
+  </style>
     {% if message %}
         {{ message }}
     {% endif %}
-    <div class="form-section">
-        <h1>Login Here</h1>
-        <form action="" method ="POST" class="form">{% csrf_token %}
-            {{ login_form.as_p}}
-            <button class="btn btn-success">Login</button>
-        </form>
+
+
+    <div class="container">
+        <div class="row">
+          <div class="col-md-4 offset-md-4 login-form">
+            <div class="card">
+              <div class="card-header">
+                <h1 class="text-center">Login</h1>
+              </div>
+              <div class="card-body">
+                <form action="" method ="POST" class="form">{% csrf_token %}
+                    {{ login_form.as_p}}
+                </br>
+                    <center><button class="btn btn-success">Login</button></center>  
+                </form>
+            </br>
+            </br>
+                <center><p>Doesn't have an account?<a href="{% url 'clzregister' %}">register here</a></p></center> 
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
         <!-- end of form of login -->
-        <p>Doesn't have an account?<a href="{% url 'clzregister' %}">register here</a></p>
-    </div>
-    <footer class="fotter">
-        <p class="copy-right">Copyright &copy;</p>
-    </footer>
 {% endblock %}

@@ -36,9 +36,9 @@ class LoginForm(forms.ModelForm):
         model  =  User
         fields =  ('email', 'password')
         widgets = {
-                   'email':forms.TextInput(attrs={'class':'form-control'}),
+                   'email':forms.TextInput(attrs={'class':'form-control','placeholder':"Enter your email"}),
            
-                   'password':forms.TextInput(attrs={'class':'form-control'}),
+                   'password':forms.TextInput(attrs={'class':'form-control','placeholder':'Password'}),
         }
 
     def __init__(self, *args, **kwargs):

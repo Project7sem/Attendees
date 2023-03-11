@@ -8,8 +8,9 @@
 
 {% block content %}
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-  <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
+  <link rel="stylesheet" href="{% static 'plugins/fontawesome-free/css/all.min.css' %}">
   <link rel="stylesheet" href="{% static 'dist/css/main.css' %}">
+
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
   <nav class="main-header navbar navbar-expand navbar-white navbar-light">
@@ -22,10 +23,6 @@
   </nav>
 
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
-    <a href="#" class="brand-link">
-      <span class="brand-text font-weight-light">Attendees</span>
-    </a>
-
     <nav class="mt-2">
       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
         <li class="nav-item">
@@ -69,14 +66,14 @@
                  
                 </div>
 
-                <h3 class="profile-username text-center">Riju Baral</h3>
+                <h3 class="profile-username text-center">{{ user.username }}</h3>
                 <center><button type="button" class="btn btn-light btn-sm"><i class="fas fa-envelope-square"></i>
                   Compose Message
                 </button> 
               </center><br>
                 <ul class="list-group list-group-unbordered mb-3">
                   <li class="list-group-item">
-                    <b>Faculty</b> <a class="float-right">Bsc.CSIT</a>
+                    <b>Faculty</b> <a class="float-right">{{ user }}</a>
                   </li>
                   <li class="list-group-item">
                     <b>Semester</b> <a class="float-right">Seveth</a>
@@ -94,7 +91,7 @@
                     <b>Phone Number</b> <a class="float-right">9846873400</a>
                   </li>
                   <li class="list-group-item">
-                    <b>Email</b> <a class="float-right">rizubaral@gmail.com</a>
+                    <b>Email</b> <a class="float-right">{{ user.email }}</a>
                   </li>
                   
                 </ul>

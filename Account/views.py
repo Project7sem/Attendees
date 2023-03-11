@@ -35,6 +35,30 @@ def StudentRegistration(request):
     else:
         return render(request,"Account/student_register.html")
 
+def TeacherRegistration(request):
+    context ={}
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        confirm_password = request.POST.get("c_password")
+        if password == confirm_password:
+            password = make_password(password)
+            reg_user = User.objects.create(email=email,username=username,password=password)
+            reg_user.save()
+            if reg_user:
+                context['message'] = "User registred successfully"
+                return redirect("login")
+            else:
+                context['message']="Cannot create user"
+                return redirect('stdregister')
+
+        else:
+            context['message']="Password didn't matched try again"
+            return render(request,"Account/teacher_register.html", context)
+    else:
+        return render(request,"Account/teacher_register.html")
+
 
 def InstituteRegistration(request):
     context ={}
@@ -59,17 +83,6 @@ def InstituteRegistration(request):
     else:
         return render(request,"Account/registeration.html")
 
-    # if request.method == 'POST':
-    #     reg_form = RegistrationForm(request.POST)
-    #     if reg_form.is_valid():
-    #         reg_form.save()
-    #         return render(request,"Account/login.html")
-    #     else:
-    #         print("form is invalid")
-    #         return render(request,"Account/college_register.html",{'forms':reg_form})
-    # else:
-    #     reg_form = RegistrationForm()
-    #     return render(request,"Account/college_register.html",{'forms':reg_form})
 
 
 
@@ -106,7 +119,10 @@ def Logout(request):
     return redirect("login")
 
 def Profile(request):
+    if request.user.role == 'ADMIN':
+        return render(request,"Account/admindash.html")
     return render(request,"Account/profile.html")
 
 def Dashboard(request):
     return render(request,"Account/dashboard.html")
+

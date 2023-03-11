@@ -45,7 +45,7 @@ class User(AbstractBaseUser):
 
     role =  models.CharField(max_length=100, choices=Roles.choices, default=Roles.ADMIN)
     email = models.EmailField(verbose_name='email', max_length=60, unique=True)
-    username = models.CharField(max_length=30,unique=True)
+    username = models.CharField(max_length=100,unique=True)
     institute = models.ForeignKey("Institute",on_delete=models.CASCADE,blank=True, null=True)
     is_admin = models.BooleanField(default = False)
     is_active = models.BooleanField(default = True)
