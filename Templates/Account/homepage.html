@@ -1,0 +1,195 @@
+
+{% include "Account/base.html" %}
+{% load static%}
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Attendees | Home Page</title>
+
+  <link rel="stylesheet" href="{% static 'https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback' %}">
+  <link rel="stylesheet" href="{% static 'plugins/fontawesome-free/css/all.min.css' %}">
+  <link rel="stylesheet" href="{% static 'dist/css/main.css' %}">
+</head>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+      </li>
+    </ul>
+
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="navbar-search" href="#" role="button">
+          <i class="fas fa-search"></i>
+        </a>
+        <div class="navbar-search-block">
+          <form class="form-inline">
+            <div class="input-group input-group-sm">
+              <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+              <div class="input-group-append">
+                <button class="btn btn-navbar" type="submit">
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+          <i class="far fa-user-circle"></i>
+        </a>      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+          <i class="far fa-bell"></i>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+          <i class="fas fa-expand-arrows-alt"></i>
+        </a>
+      </li>
+    </ul>
+  </nav>
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+
+    <div class="sidebar">
+      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <div class="user-block">
+            <img class="img-circle img-bordered-sm" src="{% static 'dist/img/rojina.jpg' %}" alt="user image">
+            <div class="info">
+                <a href="{% url 'profile' %}" class="d-block">Rojina Prajapati</a>
+              </div>
+          </div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="content-wrapper">
+
+    <section class="content">
+
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Explore</h3>
+
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+              <i class="fas fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-12 col-md-12 col-lg-8 order-2 order-md-1">
+              <div class="form-group">
+                <textarea class="form-control" rows="3" placeholder="Enter anything you want..."></textarea>
+                <br>
+                <button class="float-right btn btn-info btn-sm">Post</button>
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  <h4>Recent Activity</h4>
+                    <div class="post">
+                      <div class="user-block">
+                        <img class="img-circle img-bordered-sm" src="{% static 'dist/img/rojina.jpg' %}" alt="user image">
+                        <span class="username">
+                          <a href="#">Rojina Prajapati</a>
+                        </span>
+                        <span class="description">Shared publicly - 7:45 PM today</span>
+                      </div>
+                      <p>
+                        Hi I am Rojina. 
+                      </p>
+
+                     
+                    </div>
+
+                    <div class="post clearfix">
+                      <div class="user-block">
+                        <img class="img-circle img-bordered-sm" src="{% static 'dist/img/riju.jpg' %}" alt="User Image">
+                        <span class="username">
+                          <a href="#">Riju Baral</a>
+                        </span>
+                        <span class="description">Sent you a message - 2 days ago</span>
+                      </div>
+                      <p>
+                        I am Riju.
+                      </p>
+                      
+                    </div>
+
+                    <div class="post">
+                      <div class="user-block">
+                        <img class="img-circle img-bordered-sm" src="{% static 'dist/img/rabindra.jpg' %}" alt="user image">
+                        <span class="username">
+                          <a href="#">Rabindra Tamang</a>
+                        </span>
+                        <span class="description">Shared publicly - 1 week ago</span>
+                      </div>
+                      <p>
+                        Hi i am Rabindra
+                      </p>
+
+                      
+                    </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-md-12 col-lg-4 order-1 order-md-2">
+              <h3 class="text-primary"><i class="fas fa-paint-brush"></i> Message from Principal</h3>
+              <p class="text-muted">We at CAB, have has adopted a different teaching pedagogy. Concentration is mostly on the overall development of the students with sound research base.CAB has given students the opportunities to compete in regional.</p>
+              <br>
+              <div class="text-muted">
+                <p class="text-sm">Ramesh Pandey
+                  <b class="d-block">Principal</b>
+                </p>
+                <p class="text-sm">Rasindra Yadav
+                  <b class="d-block">Vice-Principal</b>
+                </p>
+              </div>
+
+              <h5 class="mt-5 text-muted">Student College files</h5>
+              <ul class="list-unstyled">
+                <li>
+                  <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-file-word"></i> Functional-requirements.docx</a>
+                </li>
+                <li>
+                  <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-file-pdf"></i> UAT.pdf</a>
+                </li>
+                <li>
+                  <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-envelope"></i> Email-from-library.mln</a>
+                </li>
+                <li>
+                  <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-image "></i> Logo.png</a>
+                </li>
+                <li>
+                  <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-file-word"></i> Contract-10_12_2014.docx</a>
+                </li>
+              </ul>
+              <div class="text-center mt-5 mb-3">
+                <a href="#" class="btn btn-sm btn-primary">Add files</a>
+                <a href="#" class="btn btn-sm btn-warning">Report contact</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  </footer>
+
+  <aside class="control-sidebar control-sidebar-dark">
+  </aside>
+</div>
+
+<script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'dist/js/main.js' %}"></script>
+</body>
+</html>

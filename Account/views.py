@@ -7,7 +7,7 @@ from django.contrib.auth.hashers import make_password
 # Create your views here.
 
 def Home(request):
-    return render(request, "Account/index.html")
+    return render(request, "Account/homepage.html")
 
 
 

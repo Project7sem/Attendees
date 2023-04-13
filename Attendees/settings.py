@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'Assignements',
     'Attendees',
     'Enrolled',
+    'Chat',
+    'Posts',
 ]
 
 AUTH_USER_MODEL = 'Account.User'
@@ -72,6 +74,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'Attendees.wsgi.application'
 

@@ -89,6 +89,9 @@ class AdminUser(User):
             self.role = User.Roles.ADMIN
         return super().save(*args,**kwargs)
 
+    def __str__(self):
+        return self.username
+
 
 
 
@@ -111,6 +114,9 @@ class Teacher(User):
             self.role = User.Roles.TEACHER
         return super().save(*args,**kwargs)
 
+    def __str__(self):
+        return self.username
+
 
 
 
@@ -130,6 +136,9 @@ class Student(User):
         if not self.pk:
             self.role = User.Roles.STUDENT
         return super().save(*args,**kwargs)
+    
+    def __str__(self):
+        return self.username
 
 
 
@@ -137,9 +146,13 @@ class Student(User):
 class Faculty(models.Model):
     name = models.CharField(max_length=50)   
 
+    def __str__(self):
+        return self.name
+
 class Courses(models.Model):
     name = models.CharField(max_length=50)
     faculty = models.ForeignKey("Faculty", on_delete=models.CASCADE)
+    
     
     def __str__(self):
         return self.name
@@ -149,9 +162,14 @@ class Semester(models.Model):
     faculty = models.ForeignKey("Faculty", on_delete=models.CASCADE)
     courses = models.ManyToManyField("Courses")
 
+    def __str__(self):
+        return self.sem_name
+
 
 class AdminProfile(models.Model):
     user = models.OneToOneField("AdminUser", on_delete=models.CASCADE)
+    def __str__(self):
+        return self.admin.email + "-profile"
 
 
 class StudentProfile(models.Model):
@@ -163,11 +181,17 @@ class StudentProfile(models.Model):
     Batch =models.CharField(max_length=50)
     sem = models.ForeignKey("Semester", on_delete=models.CASCADE, blank=True, null=True)
 
+    def __str__(self):
+        return self.student.email + "- profile"
+
 class TeacherProfile(models.Model):
     teacher = models.OneToOneField("Teacher", on_delete=models.CASCADE)
     courses = models.ManyToManyField("Courses")
     bio_info =  models.TextField(blank=True, null=True)
     profile_pic = models.ImageField(upload_to='profile_pics/', height_field=170, width_field=170,blank=True, null=True)
+    
+    def __str__(self):
+        return self.teacher.email + "- profile"
 
 
 
