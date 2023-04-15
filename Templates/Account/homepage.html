@@ -6,10 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Attendees | Home Page</title>
 
-  <link rel="stylesheet" href="{% static 'https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback' %}">
   <link rel="stylesheet" href="{% static 'plugins/fontawesome-free/css/all.min.css' %}">
   <link rel="stylesheet" href="{% static 'dist/css/main.css' %}">
 </head>
+
+
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
   <nav class="main-header navbar navbar-expand navbar-white navbar-light">
@@ -18,12 +19,9 @@
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
     </ul>
-
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
-        <a class="nav-link" data-widget="navbar-search" href="#" role="button">
-          <i class="fas fa-search"></i>
-        </a>
+        <a class="nav-link" data-widget="navbar-search" href="#" role="button"> <i class="fas fa-search"></i></a>
         <div class="navbar-search-block">
           <form class="form-inline">
             <div class="input-group input-group-sm">
@@ -53,17 +51,37 @@
       </li>
     </ul>
   </nav>
+
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
 
     <div class="sidebar">
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="user-block">
-            <img class="img-circle img-bordered-sm" src="{% static 'dist/img/rojina.jpg' %}" alt="user image">
+            <img class="img-circle img-bordered-sm" src="/media/{{ request.user.profile_pics }}" alt="user image">
             <div class="info">
-                <a href="{% url 'profile' %}" class="d-block">Rojina Prajapati</a>
-              </div>
-          </div>
+                <a href="{% url 'profile' %}" class="d-block">{{ request.user.username }}</a>
+            </div>
+        </div>
       </div>
+
+      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <div class="user-block">
+          <h5 class="text-white">Active users</h5>
+        </div>
+      </div>
+      {% for user in all_users %}
+        {% if user.id != request.user.id and user.is_active %}
+          <div class="user-panel mt-1 pb-1 mb-1 d-flex">
+            <div class="user-block">
+                <img class="img-circle img-bordered-sm" src="/media/{{ user.profile_pics }}" alt="{{user.profile_pics}}">
+                <div class="info">
+                    <a href="{% url 'profile' %}" class="d-block">{{ user.username }}</a>
+                </div>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+
     </div>
   </aside>
 
@@ -72,26 +90,70 @@
     <section class="content">
 
       <div class="card">
-        <div class="card-header">
-          <h3 class="card-title">Explore</h3>
-
-          <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-              <i class="fas fa-minus"></i>
-            </button>
-            <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-        </div>
         <div class="card-body">
           <div class="row">
             <div class="col-12 col-md-12 col-lg-8 order-2 order-md-1">
               <div class="form-group">
                 <textarea class="form-control" rows="3" placeholder="Enter anything you want..."></textarea>
-                <br>
                 <button class="float-right btn btn-info btn-sm">Post</button>
               </div>
+
+
+              <div class="container my-5"> 
+
+                {% for data in all_posts %}  
+
+                  <div class="card">
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <img src="/media/{{data.user.profile_pics}}" alt="User Image" class="img-fluid rounded-circle"> {{ data.user.username }} - {{data.posted_on}}
+                          <hr> 
+                        </div>
+                      
+                        <div class="col-md-12">
+                          <h5 class="card-title">{{ all_posts.user.username }}</h5>
+                          <p class="card-text">{{data.caption}}</p>
+                          {% if data.images %}
+                            <img src="media/{{ data.images }}" alt="{{ data.images}}" height="200",width="200">
+                          {% else %}
+                            <div></div>
+                          {% endif %}
+                          </br>
+                          </br>
+                          
+                            {% if request.user != data.user %}
+                                  {% if liked %}
+                                    <a href="{% url 'like_post' data.id %}" ><button type="button" class="btn btn-sm btn-primary" id="likes-button">{{data.likes.count}} <i class="fas fa-thumbs-up"></i> Liked</button></a> 
+                                  {% else %}
+                                  <a href="{% url 'like_post' data.id %}" ><button type="button" class="btn btn-sm btn-outline-primary" id="likes-button">{{data.likes.count}} <i class="fas fa-thumbs-up"></i> Like</button></a> 
+                                    <button type="button" class="btn btn-sm btn-outline-secondary">{{data.comment.count}}<i class="fas fa-comment"></i> Comment</button>
+                                  {% endif%}
+                            {% endif %}
+                         
+                          
+                        </div>
+                      </div>
+                    </div>
+
+
+                    <div class="card-footer ml-6">
+                      <form method="POST" action="{% url 'addcomment' data.id %}">{% csrf_token %}
+                        <div class="row">
+                          <div class="col-md-6">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="usercomment" placeholder="Write a comment..."> 
+                                <button type="button" class="btn btn-outline-primary">Post</button>
+                            </div>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+
+                  </div>
+                {% endfor %}
+              </div>
+        
               <div class="row">
                 <div class="col-12">
                   <h4>Recent Activity</h4>
@@ -106,43 +168,13 @@
                       <p>
                         Hi I am Rojina. 
                       </p>
-
-                     
-                    </div>
-
-                    <div class="post clearfix">
-                      <div class="user-block">
-                        <img class="img-circle img-bordered-sm" src="{% static 'dist/img/riju.jpg' %}" alt="User Image">
-                        <span class="username">
-                          <a href="#">Riju Baral</a>
-                        </span>
-                        <span class="description">Sent you a message - 2 days ago</span>
-                      </div>
-                      <p>
-                        I am Riju.
-                      </p>
-                      
-                    </div>
-
-                    <div class="post">
-                      <div class="user-block">
-                        <img class="img-circle img-bordered-sm" src="{% static 'dist/img/rabindra.jpg' %}" alt="user image">
-                        <span class="username">
-                          <a href="#">Rabindra Tamang</a>
-                        </span>
-                        <span class="description">Shared publicly - 1 week ago</span>
-                      </div>
-                      <p>
-                        Hi i am Rabindra
-                      </p>
-
-                      
-                    </div>
+                    </div> 
                 </div>
               </div>
             </div>
-            <div class="col-12 col-md-12 col-lg-4 order-1 order-md-2">
-              <h3 class="text-primary"><i class="fas fa-paint-brush"></i> Message from Principal</h3>
+
+            <div class="col-10 col-md-10 col-lg-3 order-1 order-md-2 m-3">
+              <h5 class="text-primary"> Message from Principal</h5>
               <p class="text-muted">We at CAB, have has adopted a different teaching pedagogy. Concentration is mostly on the overall development of the students with sound research base.CAB has given students the opportunities to compete in regional.</p>
               <br>
               <div class="text-muted">
@@ -182,10 +214,6 @@
       </div>
     </section>
   </div>
-  </footer>
-
-  <aside class="control-sidebar control-sidebar-dark">
-  </aside>
 </div>
 
 <script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>

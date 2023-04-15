@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,8 +42,9 @@ INSTALLED_APPS = [
     'Assignements',
     'Attendees',
     'Enrolled',
-    'Chat',
     'Posts',
+    'Chat',
+    'channels',
 ]
 
 AUTH_USER_MODEL = 'Account.User'
@@ -109,6 +111,12 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -135,5 +143,7 @@ MEDIA_ROOT = 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
+
+ASGI_APPLICATION = "Attendees.asgi.application"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

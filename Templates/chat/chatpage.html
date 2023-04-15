@@ -1,45 +1,139 @@
 {% extends 'Account/base.html' %}
 
 {% block content %}
-    <h1>Chat Room</h1>
-    <div id="chat-log">
-        {% for message in messages %}
-            <p><strong>{{ message.user.username }}</strong>: {{ message.content }}</p>
-        {% endfor %}
-    </div>
-    <form id="chat-form">
-        {% csrf_token %}
-        <input type="text" id="chat-input" name="message" placeholder="Type your message here...">
-        <button type="submit">Send</button>
-    </form>
-{% endblock %}
 
-{% block script %}
+<style>
+
+    .message{
+        color: #ffffff;
+        width: 35%;
+        padding: 8px;
+        border-radius: 2em;
+        margin: 15px 0px;
+        fornt-family: 'Poppins', sans-serif;
+
+    }
+    .sender{
+        background-color: #71aeeb;
+        margin-left: auto;
+    }
+    .receiver{
+        background-color: #62bd56;
+    }
+
+
+</style>
+
+<body>
+
+    <div class="container my-3">
+        <div class="row">
+          <div class="col-sm-8 offset-sm-2">
+
+            <div class="card mb-3">
+              <div class="card-body" id="chat-log">
+                  {% for chat in chats %}
+                    
+                    {% if chat.sender.id == request.user.id %} 
+                        <div class="message sender">
+                            <img class="bg-white rounded-circle" src="/media/{{ request.user.profile_pics }} "  alt="" height=40 width=40>  --  {{ chat.text }}
+                        </div>
+                          
+
+
+                    {% else %}
+                        <div  class="message receiver primary">
+                            <img class="bg-white rounded-circle" src="/media/{{ chat.sender.profile_pics }}" alt="" height=40 width=40>  --  {{ chat.text }}
+                            
+                        </div> 
+                     
+                    {% endif%}
+                  {% endfor %}
+              </div>
+            </div>
+
+            
+              <div class="form-group row">
+                  <div class="col-md-8">
+                    <textarea id="chat-message-input" class="form-control" rows="2" placeholder="Type your message here..."></textarea>
+                  </div>
+                  <div class="col-md-4">
+                    <button id="chat-message-submit" value="send" type="submit" class="btn btn-primary">Send</button>
+                  </div>
+                
+                
+              </div>
+ 
+
+          </div>
+        </div>
+      </div>
+      {{ request.user.id|json_script:"user_id" }}
+
+    {{ room_name|json_script:"room-name" }}
     <script>
-        var chatLog = document.getElementById('chat-log');
-        var chatForm = document.getElementById('chat-form');
-        var chatInput = document.getElementById('chat-input');
-        var chatSocket = new WebSocket(
-            'ws://' + window.location.host +
-            '/ws/chat/');
+        const roomName = JSON.parse(document.getElementById('room-name').textContent);
+        const chatLog = document.querySelector('#chat-log')
+
+        
+        if (!chatLog.hasChildNodes()){
+            const notext = document.createElement('h5')
+            notext.innerText = "No any messages"
+            notext.id ="empty"
+            chatLog.appendChild(notext)
+        }
+
+        const chatSocket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/chat/'
+            + roomName
+            + '/'
+        );
+
 
         chatSocket.onmessage = function(e) {
-            var data = JSON.parse(e.data);
-            chatLog.innerHTML += '<p><strong>' + data.user + '</strong>: ' + data.message + '</p>';
-        };
+            const data = JSON.parse(e.data);
+            const messageElement= document.createElement('div')
+            const userId = data['user_id']
+            const LoggedInuserId = JSON.parse(document.getElementById("user_id").textContent)
+            console.log(LoggedInuserId)
 
-        chatForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            var message = chatInput.value;
-            chatSocket.send(JSON.stringify({
-                'user': '{{ request.user.username }}',
-                'message': message
-            }));
-            chatInput.value = '';
-        });
+            if(userId===LoggedInuserId){
+                messageElement.classList.add("message",'sender')
+            }
+            else{
+                messageElement.classList.add("message","receiver")
+            }
+            
+            messageElement.innerText= data.message
+            chatLog.appendChild(messageElement)
+
+            if(document.querySelector('#emtpy')){
+                document.querySelector('#empty').remove()
+            }
+        };
 
         chatSocket.onclose = function(e) {
             console.error('Chat socket closed unexpectedly');
         };
+
+        document.querySelector('#chat-message-input').focus();
+        document.querySelector('#chat-message-input').onkeyup = function(e) {
+            if (e.keyCode === 13) {  // enter, return
+                document.querySelector('#chat-message-submit').click();
+            }
+        };
+
+        document.querySelector('#chat-message-submit').onclick = function(e) {
+            const messageInputDom = document.querySelector('#chat-message-input');
+            const message = messageInputDom.value;
+            chatSocket.send(JSON.stringify({
+                'message': message
+            }));
+            messageInputDom.value = '';
+        };
     </script>
-{% endblock %}
+</body>
+
+{% endblock content %}

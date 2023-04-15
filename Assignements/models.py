@@ -12,10 +12,6 @@ class CreateAssignment(models.Model):
     date_assigned = models.DateTimeField( auto_now_add=True)
     date_line = models.DateTimeField(auto_now=False, auto_now_add=False)
 
-    # def save(self,*args, **kwargs):
-    #     if self.user.ROLE=="TEACHER":
-    #         assigned_by= self.user
-    #         return super().save(*args, **kwargs)
 
     def __str__(self):
         return self.assignment_name

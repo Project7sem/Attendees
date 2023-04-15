@@ -47,6 +47,7 @@ class User(AbstractBaseUser):
     email = models.EmailField(verbose_name='email', max_length=60, unique=True)
     username = models.CharField(max_length=100,unique=True)
     institute = models.ForeignKey("Institute",on_delete=models.CASCADE,blank=True, null=True)
+    profile_pics = models.ImageField(upload_to="User/Profile/images", blank=True,null=True)
     is_admin = models.BooleanField(default = False)
     is_active = models.BooleanField(default = True)
     is_superuser = models.BooleanField(default = False)
@@ -168,30 +169,29 @@ class Semester(models.Model):
 
 class AdminProfile(models.Model):
     user = models.OneToOneField("AdminUser", on_delete=models.CASCADE)
+
     def __str__(self):
-        return self.admin.email + "-profile"
+        return self.user.email + " - profile"
 
 
 class StudentProfile(models.Model):
     symbol_no = models.CharField(max_length=50)
     student = models.OneToOneField('Student', related_name='student', on_delete=models.CASCADE)
     bio_info =  models.TextField(blank=True, null=True)
-    profile_pic = models.ImageField(upload_to='profile_pics/', height_field=170, width_field=170,blank=True, null= True)
     faculty = models.ForeignKey('Faculty', related_name='faculty', on_delete=models.CASCADE,blank=True, null=True)
     Batch =models.CharField(max_length=50)
     sem = models.ForeignKey("Semester", on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
-        return self.student.email + "- profile"
+        return self.student.email + " - profile"
 
 class TeacherProfile(models.Model):
     teacher = models.OneToOneField("Teacher", on_delete=models.CASCADE)
     courses = models.ManyToManyField("Courses")
     bio_info =  models.TextField(blank=True, null=True)
-    profile_pic = models.ImageField(upload_to='profile_pics/', height_field=170, width_field=170,blank=True, null=True)
     
     def __str__(self):
-        return self.teacher.email + "- profile"
+        return self.teacher.email + " - profile"
 
 
 

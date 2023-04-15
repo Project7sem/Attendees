@@ -1,0 +1,20 @@
+{% extends 'Account/base.html' %}
+
+{% block content %}
+    <h1>Welcome to the Chat App</h1>
+    {% if user.is_authenticated %}
+        <p>You're logged in as {{ user.username }}</p>
+        <p>Choose a chat room:</p>
+        <ul>
+            {% if chat_rooms %}
+                {% for room in chat_rooms %}
+                    <li><a href="{% url 'room'  room.name %}">{{ room.name }}</a></li>
+                {% endfor %}
+            {% else %}
+                <p> No chat room available </p>
+            {% endif%}
+        </ul>
+    {% else %}
+        <p>You're not logged in. Please <a href="{% url 'login' %}">log in</a> or <a href="{% url 'signup' %}">sign up</a> to use the chat app.</p>
+    {% endif %}
+{% endblock %}
