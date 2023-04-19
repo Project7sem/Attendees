@@ -52,38 +52,7 @@
     </ul>
   </nav>
 
-  <aside class="main-sidebar sidebar-dark-primary elevation-4">
-
-    <div class="sidebar">
-      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-        <div class="user-block">
-            <img class="img-circle img-bordered-sm" src="/media/{{ request.user.profile_pics }}" alt="user image">
-            <div class="info">
-                <a href="{% url 'profile' %}" class="d-block">{{ request.user.username }}</a>
-            </div>
-        </div>
-      </div>
-
-      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-        <div class="user-block">
-          <h5 class="text-white">Active users</h5>
-        </div>
-      </div>
-      {% for user in all_users %}
-        {% if user.id != request.user.id and user.is_active %}
-          <div class="user-panel mt-1 pb-1 mb-1 d-flex">
-            <div class="user-block">
-                <img class="img-circle img-bordered-sm" src="/media/{{ user.profile_pics }}" alt="{{user.profile_pics}}">
-                <div class="info">
-                    <a href="{% url 'profile' %}" class="d-block">{{ user.username }}</a>
-                </div>
-            </div>
-          </div>
-        {% endif %}
-      {% endfor %}
-
-    </div>
-  </aside>
+ {% include "Account/side_navbar.html" %}
 
   <div class="content-wrapper">
 
@@ -93,10 +62,14 @@
         <div class="card-body">
           <div class="row">
             <div class="col-12 col-md-12 col-lg-8 order-2 order-md-1">
+              <form method="POST" enctype="multipart/form-data" action="{% url 'addpost' %}" > {% csrf_token %}
               <div class="form-group">
-                <textarea class="form-control" rows="3" placeholder="Enter anything you want..."></textarea>
+                <textarea class="form-control" rows="2" name="caption" placeholder="Enter anything you want..."></textarea>
+                <br>
+                <input type="file" name="images">
                 <button class="float-right btn btn-info btn-sm">Post</button>
               </div>
+            </form>
 
 
               <div class="container my-5"> 
@@ -106,12 +79,13 @@
                   <div class="card">
                     <div class="card-body">
                       <div class="row">
-                        <div class="col-md-6">
-                          <img src="/media/{{data.user.profile_pics}}" alt="User Image" class="img-fluid rounded-circle"> {{ data.user.username }} - {{data.posted_on}}
+                        <div class="col-md-10">
+                           <a href="{% url 'profile' %}"><img src="/media/{{data.user.profile_pics}}" alt="User Image" class="img-fluid rounded-circle" height=40 width=40><b>{{ data.user.username }}</b></a>  - {{data.posted_on}}
                           <hr> 
                         </div>
                       
                         <div class="col-md-12">
+                          <a href="{% url 'postdetails' data.id %}">
                           <h5 class="card-title">{{ all_posts.user.username }}</h5>
                           <p class="card-text">{{data.caption}}</p>
                           {% if data.images %}
@@ -119,17 +93,13 @@
                           {% else %}
                             <div></div>
                           {% endif %}
+                        </a>
                           </br>
                           </br>
-                          
-                            {% if request.user != data.user %}
-                                  {% if liked %}
-                                    <a href="{% url 'like_post' data.id %}" ><button type="button" class="btn btn-sm btn-primary" id="likes-button">{{data.likes.count}} <i class="fas fa-thumbs-up"></i> Liked</button></a> 
-                                  {% else %}
-                                  <a href="{% url 'like_post' data.id %}" ><button type="button" class="btn btn-sm btn-outline-primary" id="likes-button">{{data.likes.count}} <i class="fas fa-thumbs-up"></i> Like</button></a> 
-                                    <button type="button" class="btn btn-sm btn-outline-secondary">{{data.comment.count}}<i class="fas fa-comment"></i> Comment</button>
-                                  {% endif%}
-                            {% endif %}
+                        
+                            <a href="{% url 'like_post' data.id %}" ><button type="button" class="btn btn-sm btn-outline-primary" id="likes-button">{{data.likes.count}} <i class="fas fa-thumbs-up"></i> Like</button></a> 
+                            <button type="button" class="btn btn-sm btn-outline-secondary">{{data.comment.count}}<i class="fas fa-comment"></i> Comment</button>
+        
                          
                           
                         </div>
@@ -142,9 +112,10 @@
                         <div class="row">
                           <div class="col-md-6">
                             <div class="input-group">
-                                <input type="text" class="form-control" name="usercomment" placeholder="Write a comment..."> 
-                                <button type="button" class="btn btn-outline-primary">Post</button>
+                                <input type="text" class="form-control" name="usercomment" placeholder="Write a comment..." required> 
+                                <button class="float-right btn btn-info btn-sm">Post</button>
                             </div>
+                            
                           </div>
                         </div>
                       </form>

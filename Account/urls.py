@@ -11,5 +11,6 @@ urlpatterns = [
     path("dashboard/", views.Dashboard, name="dashboard"),
     path("course/",views.Courses, name='course'),
     path("camera/",views.Camera, name='camera'),
+    path("othersprofile/<int:pk>",views.OthersProfile, name="othersprofile"),
 
 ]

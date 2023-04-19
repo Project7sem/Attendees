@@ -23,6 +23,7 @@ urlpatterns = [
     path("account/", include("Account.urls")),
     path("",include("Posts.urls")),
     path("chat/",include("Chat.urls")),
+    path("takeattendance/", include("Attendance.urls")),
 
 ]
 

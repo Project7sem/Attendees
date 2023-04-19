@@ -15,3 +15,11 @@ class CreateAssignment(models.Model):
 
     def __str__(self):
         return self.assignment_name
+
+class SubmitAssigment(models.Model):
+    assignment = models.OneToOneField(CreateAssignment, related_name="assignment" ,on_delete=models.CASCADE)
+    answer = models.FileField(upload_to="Assignemnt/", max_length=1000)
+    submited_by = models.ForeignKey(Student, related_name="submited_by", on_delete=models.CASCADE)
+    submited_to = models.OneToOneField(Teacher, related_name="submited_to", on_delete=models.CASCADE)
+    submitted_on = models.DateTimeField( auto_now_add=True)
+

@@ -1,0 +1,230 @@
+{% include "Account/base.html" %}
+{% load static %}
+
+{% block title %}
+  <title>Attendees| User Profile</title>
+{% endblock title %}
+
+  <link rel="stylesheet" href="{% static 'plugins/fontawesome-free/css/all.min.css' %}">
+  <link rel="stylesheet" href="{% static 'dist/css/main.css' %}">
+
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+{% include 'Account/side_navbar.html' %}
+
+
+{% block content %}
+
+  <div class="content-wrapper">
+
+  {% if request.user.is_authenticated and student_profile %}
+
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-3">
+
+            <div class="card card-primary card-outline">
+              <div class="card-body box-profile">
+                <div class="text-center"> 
+                </div>
+          
+
+                {% if student_profile %}       
+                    {% for students in student_profile %}   
+
+                        <h3 class="profile-username text-center"><img src="/media/{{ students.student.profile_pics }}" alt="{{ students.student.profile_pics }}" height=40 width=40>{{ students.student.username }}</h3>
+                        {% if  students.student.id != request.user.id %}
+                        <center><a href="{% url 'room' user.username  %}"><button type="button" class="btn btn-light btn-sm"><i class="fas fa-envelope-square"></i>
+                            Compose Message
+                        </button> </a> 
+                        </center><br>
+                        {% endif %}
+                    
+                        <ul class="list-group list-group-unbordered mb-3">
+                        <li class="list-group-item">
+                            <b>Faculty</b> <a class="float-right">{{ students.faculty }}</a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>Semester</b> <a class="float-right">{{ students.sem}}</a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>Role</b> <a class="float-right">{{ students.student.role}}</a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>Symbol No</b> <a class="float-right">{{ students.symbol_no}}</a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>Batch</b> <a class="float-right">{{ students.Batch}}</a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>Phone Number</b> <a class="float-right">9846873400</a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>Email</b> <a class="float-right">{{ students.student.email }}</a>
+                        </li>
+                        
+                        </ul>
+                    {% endfor %}
+              {% endif %}
+              </div>
+            </div> 
+          </div>
+
+          <div class="col-md-9">
+            <div class="card">
+              <div class="card-header p-2">
+                <ul class="nav nav-pills">
+                  <li class="nav-item"><a class="nav-link" href="#enrolled" data-toggle="tab">Enrolled Courses</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#activity" data-toggle="tab">Activity</a></li>
+                </ul>
+              </div>
+              <div class="card-body">
+                <div class="tab-content">
+
+                  <div class="active tab-pane" id="enrolled">
+                    <div class="post">
+                    <div class="post clearfix">
+                      <div class="user-block">
+                        <h5>Semester {{ profile.sem }}</h5>
+
+                      </div>
+                    </div>
+                    </div>
+                  </div>
+
+                  <div class=" tab-pane" id="activity">
+                    {% for post in posts %}
+                        <div class="post">
+                          <div class="user-block">
+                            <span>
+                              <a href="#"><b>{{ post.user.username }}</b></a>
+                              <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
+                            </span><br>
+                    
+                          </div>
+                          <p>
+                            {{ post.caption }}    <a href="">see details ..</a> 
+                          </p>
+
+                          <p>
+                            <a href="#" class="link-black text-sm mr-2"><i class="fas fa-share mr-1"></i> Share</a>
+                            <a href="#" class="link-black text-sm"><i class="far fa-thumbs-up mr-1"></i> {{ post.likes.count }}</a>
+                          </p>
+                        </div>
+                        {% endfor %}
+                  </div>
+
+
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  
+  {% elif request.user.is_authenticated and teacher_profile %}
+
+     <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-3">
+
+            <div class="card card-primary card-outline">
+              <div class="card-body box-profile">
+                <div class="text-center"> 
+                </div>
+                {% if teacher_profile %}  
+                {% for teachers in teacher_profile %}  
+                          
+                <h3 class="profile-username text-center"><img src="/media/{{ students.student.profile_pics }}" alt="{{ students.student.profile_pics }}" height=40 width=40>{{ teachers.teacher.username }}</h3>
+                {% if  teachers.teacher.id != request.user.id %}
+                  <center><a href="{% url 'room' user.username  %}"><button type="button" class="btn btn-light btn-sm"><i class="fas fa-envelope-square"></i>
+                    Compose Message
+                  </button> </a> 
+                </center><br>
+                {% endif %}
+              
+                <ul class="list-group list-group-unbordered mb-3">
+                  <li class="list-group-item">
+                    <b>Role</b> <a class="float-right">{{ teachers.teacher.role }}</a>
+                  </li>
+                  <li class="list-group-item">
+                    <b>Courses</b> <a class="float-right">{{ teachers.courses.count }}</a>
+                  </li>
+                  <li class="list-group-item">
+                    <b>Email</b> <a class="float-right">{{ teachers.teacher.email }}</a>
+                  </li>
+                  
+                </ul>
+              {% endfor %}
+              {% endif %}
+              </div>
+            </div> 
+          </div>
+
+          <div class="col-md-9">
+            <div class="card">
+              <div class="card-header p-2">
+                <ul class="nav nav-pills">
+                  <li class="nav-item"><a class="nav-link" href="#enrolled" data-toggle="tab">Teaches</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#activity" data-toggle="tab">Activity</a></li>
+                </ul>
+              </div>
+              <div class="card-body">
+                <div class="tab-content">
+
+                  <div class="active tab-pane" id="enrolled">
+                    <div class="post">
+                    <div class="post clearfix">
+                      <div class="user-block">
+                        <h5>Semester {{ profile.sem }}</h5>
+                        {% for course in courses %}
+
+                        {% endfor %}
+                      </div>
+                    </div>
+                    </div>
+                  </div>
+
+                  <div class=" tab-pane" id="activity">
+                    {% for post in posts %}
+                        <div class="post">
+                          <div class="user-block">
+                            <span>
+                              <a href="#"><b>{{ request.user.username }}</b></a>
+                              <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
+                            </span><br>
+                            <span> You posted recently</span>
+                          </div>
+                          <p>
+                            {{ post.caption }}    <a href="">see details ..</a> 
+                          </p>
+
+                          <p>
+                            <a href="#" class="link-black text-sm mr-2"><i class="fas fa-share mr-1"></i> Share</a>
+                            <a href="#" class="link-black text-sm"><i class="far fa-thumbs-up mr-1"></i> {{ post.likes.count }}</a>
+                          </p>
+                        </div>
+                        {% endfor %}
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  {% endif %}
+  </div>
+
+  <aside class="control-sidebar control-sidebar-dark">
+  </aside>
+
+  {% endblock content %}
+</div>
+</body>
+

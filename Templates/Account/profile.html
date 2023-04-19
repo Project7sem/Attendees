@@ -5,7 +5,6 @@
   <title>Attendees| User Profile</title>
 {% endblock title %}
 
-  <link rel="stylesheet" href="{% static 'https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback' %}">
   <link rel="stylesheet" href="{% static 'plugins/fontawesome-free/css/all.min.css' %}">
   <link rel="stylesheet" href="{% static 'dist/css/main.css' %}">
 
@@ -17,14 +16,8 @@
 {% block content %}
 
   <div class="content-wrapper">
-    <section class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1>Profile</h1>
-          </div>
-        </div>
-    </section>
+
+  {% if user.is_authenticated and user.role == "STUDENT" %}
 
     <section class="content">
       <div class="container-fluid">
@@ -33,255 +26,250 @@
 
             <div class="card card-primary card-outline">
               <div class="card-body box-profile">
-                <div class="text-center">
-                 
+                <div class="text-center"> 
                 </div>
+          
 
-                <h3 class="profile-username text-center">{{ user.username }}</h3>
-                <center><button type="button" class="btn btn-light btn-sm"><i class="fas fa-envelope-square"></i>
-                  Compose Message
-                </button> 
-              </center><br>
+                {% if profile %}       
+                <h3 class="profile-username text-center"><img class="img-circle img-bordered-sm" src="/media/{{ profile.student.profile_pics }}" alt="{{ profile.student.profile_pics }}" height=40 width=40>{{ teachers.teacher.username }}</h3>         
+                {% if  profile.student.id != request.user.id %}
+                  <center><a href="{% url 'room' user.username  %}"><button type="button" class="btn btn-light btn-sm"><i class="fas fa-envelope-square"></i>
+                    Compose Message
+                  </button> </a> 
+                </center><br>
+                {% endif %}
+              
                 <ul class="list-group list-group-unbordered mb-3">
                   <li class="list-group-item">
-                    <b>Faculty</b> <a class="float-right">{{ user }}</a>
+                    <b>Faculty</b> <a class="float-right">{{ profile.faculty }}</a>
                   </li>
                   <li class="list-group-item">
-                    <b>Semester</b> <a class="float-right">Seveth</a>
+                    <b>Semester</b> <a class="float-right">{{profile.sem}}</a>
                   </li>
                   <li class="list-group-item">
-                    <b>Section</b> <a class="float-right">A</a>
+                    <b>Role</b> <a class="float-right">{{profile.student.role}}</a>
                   </li>
                   <li class="list-group-item">
-                    <b>Symbol No</b> <a class="float-right">205641</a>
+                    <b>Symbol No</b> <a class="float-right">{{profile.symbol_no}}</a>
                   </li>
                   <li class="list-group-item">
-                    <b>Batch</b> <a class="float-right">2018</a>
+                    <b>Batch</b> <a class="float-right">{{profile.Batch}}</a>
                   </li>
                   <li class="list-group-item">
                     <b>Phone Number</b> <a class="float-right">9846873400</a>
                   </li>
                   <li class="list-group-item">
-                    <b>Email</b> <a class="float-right">{{ user.email }}</a>
+                    <b>Email</b> <a class="float-right">{{ profile.student.email }}</a>
                   </li>
                   
                 </ul>
+              {% endif %}
               </div>
-            </div>
-
-            
+            </div> 
           </div>
+
           <div class="col-md-9">
             <div class="card">
               <div class="card-header p-2">
                 <ul class="nav nav-pills">
-                  <li class="nav-item"><a class="nav-link" href="#message" data-toggle="tab">Message</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#enrolled" data-toggle="tab">Enrolled Courses</a></li>
                   <li class="nav-item"><a class="nav-link" href="#activity" data-toggle="tab">Activity</a></li>
                   <li class="nav-item"><a class="nav-link" href="#assignment" data-toggle="tab">Assignment</a></li>
                 </ul>
               </div>
               <div class="card-body">
                 <div class="tab-content">
-                  <div class=" tab-pane" id="message">
+
+                  <div class="active tab-pane" id="enrolled">
                     <div class="post">
                     <div class="post clearfix">
                       <div class="user-block">
-                        <span>
-                          <a href="#"><b>User2</b></a>
-                          <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
-                        </span><br>
-                        <span>Sent you a message - two minutes ago</span>
-                      </div>
-                      <p>
-                        Hey! Can you sent me notes of the previous class?
-                      </p>
-
-                      <form class="form-horizontal">
-                        <div class="input-group input-group-sm mb-0">
-                          <input class="form-control form-control-sm" placeholder="Response">
-                          <div class="input-group-append">
-                            <button type="submit" class="btn btn-danger">Send</button>
+                        <h5>Semester {{ profile.sem }}</h5>
+                           {% for course in courses %}
+                           <div class="list-group">
+                            <a href="#" class="list-group-item list-group-item-action">{{ course }}</a>
                           </div>
-                        </div>
-                      </form>
+                           {% endfor %}
+
+                      </div>
                     </div>
-                    <div class="post clearfix">
-                      <div class="user-block">
-                        <span>
-                          <a href="#"><b>User3</b></a>
-                          <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
-                        </span><br>
-                        <span>Sent you a message - two minutes ago</span>
-                      </div>
-                      <p>
-                        Hey! Are you okay?
-                      </p>
-
-                      <form class="form-horizontal">
-                        <div class="input-group input-group-sm mb-0">
-                          <input class="form-control form-control-sm" placeholder="Response">
-                          <div class="input-group-append">
-                            <button type="submit" class="btn btn-danger">Send</button>
-                          </div>
-                        </div>
-                      </form>
                     </div>
                   </div>
-                  </div>
+
                   <div class=" tab-pane" id="activity">
-                    <div class="post">
-                      <div class="user-block">
-                        <span>
-                          <a href="#"><b>Riju</b></a>
-                          <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
-                        </span><br>
-                        <span> You posted recently</span>
+                    {% for post in posts %}
+                        <div class="post">
+                          <div class="user-block">
+                            <span>
+                              <a href="#"><b>{{ request.user.username }}</b></a>
+                              <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
+                            </span><br>
+                            <span> You posted recently</span>
+                          </div>
+                          <p>
+                            {{ post.caption }}    <a href="">see details ..</a> 
+                          </p>
+
+                          <p>
+                            <a href="#" class="link-black text-sm mr-2"><i class="fas fa-share mr-1"></i> Share</a>
+                            <a href="#" class="link-black text-sm"><i class="far fa-thumbs-up mr-1"></i> {{ post.likes.count }}</a>
+                          </p>
+                        </div>
+                        {% endfor %}
+                  </div>
+
+                  <div class="tab-pane" id="assignment">
+                    {% for assignment in assignments %}
+                      <div class="row">
+                        <div class="col-12">
+                            <div class="post">
+                              <div class="user-block">
+                                <span class="subjectname">
+                                  <a href="#"><b>{{ assignment.subject }}</a> - <a href="">{{ assignment.assigned_by }}</b></a> 
+                                </span>
+                              </div>
+                              <h5>
+                                {{ assignment.descripton }}
+                              </h5>
+                              <p>
+                                Till:  {{ assignment.date_line }}
+                              </p>
+                            <form method="POST" enctype="multipart/form-data" action="">{% csrf_token %}
+                              <div class="form-group">  
+                                <input type="file" name="assignment_file" id="exampleInputFile">
+                              </div>
+                              <button class="btn btn-success btn-sm">Submit</button>
+                            </form>
+                              <hr>
+
+                            </div>
+                        </div>
                       </div>
-                      <p>
-                        I am not able to attend the class today.
-                      </p>
+                    {% endfor %}
+                  </div>
 
-                      <p>
-                        <a href="#" class="link-black text-sm mr-2"><i class="fas fa-share mr-1"></i> Share</a>
-                        <a href="#" class="link-black text-sm"><i class="far fa-thumbs-up mr-1"></i> Like</a>
-                        <span class="float-right">
-                          <a href="#" class="link-black text-sm">
-                            <i class="far fa-comments mr-1"></i> Comments (5)
-                          </a>
-                        </span>
-                      </p>
 
-                      <input class="form-control form-control-sm" type="text" placeholder="Type a comment">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  
+  {% elif user.is_authenticated and user.role == "TEACHER" %}
+     <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-3">
+
+            <div class="card card-primary card-outline">
+              <div class="card-body box-profile">
+                <div class="text-center"> 
+                </div>
+          
+
+                {% if profile %}                
+                <h3 class="profile-username text-center"> <img src="/media/{{ profile.teacher.profile_pics }}" alt="{{ profile.teacher.profile_pics }}" height=40 width=40>{{ request.user.username }}</h3>
+                {% if  profile.teacher.id != request.user.id %}
+                  <center><a href="{% url 'room' user.username  %}"><button type="button" class="btn btn-light btn-sm"><i class="fas fa-envelope-square"></i>
+                    Compose Message
+                  </button> </a> 
+                </center><br>
+                {% endif %}
+              
+                <ul class="list-group list-group-unbordered mb-3">
+                  <li class="list-group-item">
+                    <b>Role</b> <a class="float-right">{{ profile.teacher.role }}</a>
+                  </li>
+                  <li class="list-group-item">
+                    <b>Courses</b> <a class="float-right">{{ profile.courses.count }}</a>
+                  </li>
+                  <li class="list-group-item">
+                    <b>Email</b> <a class="float-right">{{ profile.teacher.email }}</a>
+                  </li>
+                  
+                </ul>
+              {% endif %}
+              </div>
+            </div> 
+          </div>
+
+          <div class="col-md-9">
+            <div class="card">
+              <div class="card-header p-2">
+                <ul class="nav nav-pills">
+                  <li class="nav-item"><a class="nav-link" href="#enrolled" data-toggle="tab">Teaches</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#activity" data-toggle="tab">Activity</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#assignment" data-toggle="tab">Assignment</a></li>
+                </ul>
+              </div>
+              <div class="card-body">
+                <div class="tab-content">
+
+                  <div class="active tab-pane" id="enrolled">
+                    <div class="post">
+                    <div class="post clearfix">
+                      <div class="user-block">
+                        <h5>Semester {{ profile.sem }}</h5>
+                        {% for course in courses %}
+
+                        {% endfor %}
+                      </div>
                     </div>
-                    <div class="post">
-                      <div class="user-block">
-                        <span >
-                          <a href="#"><b>Riju</b></a>
-                          <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
-                        </span><br>
-                        <span> You submitted an assignment of Network Security.</span>
-                      </div>
-
-                      <input class="form-control form-control-sm" type="text" placeholder="Type a comment">
-                    </div>
-                    <div class="post">
-                      <div class="user-block">
-                        <span >
-                          <a href="#"><b>Riju</b></a>
-                          <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
-                        </span><br>
-                        <span> You posted a blog</span>
-                      </div>
-                      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga explicabo non dolore, minus necessitatibus laudantium, rerum voluptas natus possimus ipsam dolorem minima ad vitae ipsa? Vitae commodi magnam rem non.</p>
-
-                      <p>
-                        <a href="#" class="link-black text-sm mr-2"><i class="fas fa-share mr-1"></i> Share</a>
-                        <a href="#" class="link-black text-sm"><i class="far fa-thumbs-up mr-1"></i> Like</a>
-                        <span class="float-right">
-                          <a href="#" class="link-black text-sm">
-                            <i class="far fa-comments mr-1"></i> Comments (5)
-                          </a>
-                        </span>
-                      </p>
-
-                      <input class="form-control form-control-sm" type="text" placeholder="Type a comment">
                     </div>
                   </div>
-                  <div class="active tab-pane" id="assignment">
-                    <div class="row">
-                      <div class="col-12">
-                          <div class="post">
-                            <div class="user-block">
-                              <span class="subjectname">
-                                <a href="#"><b>Network Security</b></a>
-                              </span>
-                            </div>
-                            <p>
-                              Complete the notes of chapter one.
-                            </p>
-                            <div class="form-group">
-                              
-                              <div class="input-group">
-                                <div class="custom-file">
-                                  <input type="file" class="custom-file-input" id="exampleInputFile">
-                                  <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-                                </div>
-                                <div class="input-group-append">
-                                  <span class="input-group-text">Upload</span>
-                                </div>
-                              </div>
-                            </div>
-                            <button class="btn btn-success btn-sm">Submit</button>
-                            <hr>
-                            <div class="user-block">
-                              <span class="subjectname">
-                                <a href="#"><b>Advanced Java</b></a>
-                              </span>
-                            </div>
-                            <p>
-                              Create a login form using swing.
-                            </p>
-                            
-                            <div class="form-group">
-                              
-                              <div class="input-group">
-                                <div class="custom-file">
-                                  <input type="file" class="custom-file-input" id="exampleInputFile">
-                                  <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-                                </div>
-                                <div class="input-group-append">
-                                  <span class="input-group-text">Upload</span>
-                                </div>
-                              </div>
-                            </div>
-                            <button class="btn btn-success btn-sm">Submit</button>
-                            <hr>
-                            <div class="user-block">
-                              <span class="subjectname">
-                                <a href="#"><b>Principle Of Management</b></a>
-                              </span>
-                            </div>
-                            <p>
-                              Complete the notes till chapter 5.
-                            </p>
-                            <div class="form-group">
-                              <div class="input-group">
-                                <div class="custom-file">
-                                  <input type="file" class="custom-file-input" id="exampleInputFile">
-                                  <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-                                </div>
-                                <div class="input-group-append">
-                                  <span class="input-group-text">Upload</span>
-                                </div>
-                              </div>
-                            </div>
-                            <button class="btn btn-success btn-sm">Submit</button>
-                            <hr>
-                            <div class="user-block">
-                              <span class="subjectname">
-                                <a href="#"><b>Data Warehouse and Data Mining</b></a>
-                              </span>
-                            </div>
-                            <p>
-                              Answer questions given in the slides.
-                            </p>
-                            <div class="form-group">
-                              
-                              <div class="input-group">
-                                <div class="custom-file">
-                                  <input type="file" class="custom-file-input" id="exampleInputFile">
-                                  <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-                                </div>
-                                <div class="input-group-append">
-                                  <span class="input-group-text">Upload</span>
-                                </div>
-                              </div>
-                            </div>
-                            <button class="btn btn-success btn-sm">Submit</button>
-                            <hr>
+
+                  <div class=" tab-pane" id="activity">
+                    {% for post in posts %}
+                        <div class="post">
+                          <div class="user-block">
+                            <span>
+                              <a href="#"><b>{{ request.user.username }}</b></a>
+                              <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
+                            </span><br>
+                            <span> You posted recently</span>
                           </div>
+                          <p>
+                            {{ post.caption }}    <a href="">see details ..</a> 
+                          </p>
+
+                          <p>
+                            <a href="#" class="link-black text-sm mr-2"><i class="fas fa-share mr-1"></i> Share</a>
+                            <a href="#" class="link-black text-sm"><i class="far fa-thumbs-up mr-1"></i> {{ post.likes.count }}</a>
+                          </p>
+                        </div>
+                        {% endfor %}
+                  </div>
+
+                  <div class="tab-pane" id="assignment">
+                    {% for assignment in assignments %}
+                      <div class="row">
+                        <div class="col-12">
+                            <div class="post">
+                              <div class="user-block">
+                                <span class="subjectname">
+                                  <a href="#"><b>{{ assignment.subject }}</a> - <a href="">{{ assignment.assigned_by }}</b></a> 
+                                </span>
+                              </div>
+                              <h5>
+                                {{ assignment.descripton }}
+                              </h5>
+                              <p>
+                                Till:  {{ assignment.date_line }}
+                              </p>
+                            <form method="POST" enctype="multipart/form-data" action="">{% csrf_token %}
+                              <div class="form-group">  
+                                <input type="file" name="assignment_file" id="exampleInputFile">
+                              </div>
+                              <button class="btn btn-success btn-sm">Submit</button>
+                            </form>
+                              <hr>
+
+                            </div>
+                        </div>
                       </div>
-                    </div>
+                    {% endfor %}
                   </div>
                 </div>
               </div>
@@ -290,6 +278,7 @@
         </div>
       </div>
     </section>
+  {% endif %}
   </div>
 
   <aside class="control-sidebar control-sidebar-dark">

@@ -4,8 +4,6 @@ from .forms import CommentsForm
 from Account.models import User
 
 
-# Create your views here.
-
 def ViewPosts(request):
     all_posts = BlogPost.objects.all()
     cforms = CommentsForm()
@@ -45,3 +43,25 @@ def addComment(request,pk):
     else:
         print("no post request")
         return redirect("home")
+
+def addPost(request):
+    if request.method =="POST":
+        cap = request.POST.get("caption")
+        image =request.FILES["images"]
+        print(image)
+        
+        post = BlogPost.objects.create(user=request.user, caption=cap, images=image)
+        post.save()
+        return redirect("home")
+    else:
+        return redirect("home")
+
+def PostDetails(request, pk):
+    posts = BlogPost.objects.get(id=pk)
+    comments = Comments.objects.filter(post=posts)
+    context={
+        "post": posts,
+        'comments':comments,
+        'all_users' : User.objects.all(),
+    }
+    return render(request, 'Account/postdetails.html', context)

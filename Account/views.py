@@ -1,9 +1,10 @@
 from django.shortcuts import render,redirect
 from .forms import RegistrationForm, LoginForm
 from django.contrib.auth import authenticate, login, logout
-from .models import User,Teacher,Student
+from .models import User,Teacher,Student,TeacherProfile, StudentProfile, Semester, Courses
 from django.contrib.auth.hashers import make_password
-
+from Posts.models import BlogPost
+from Assignements.models import CreateAssignment
 # Create your views here.
 
 def Home(request):
@@ -122,9 +123,52 @@ def Logout(request):
     return redirect("login")
 
 def Profile(request):
+    posts = BlogPost.objects.filter(user=request.user).all()
+    all_users = User.objects.all()
     if request.user.role == 'ADMIN':
-        return render(request,"Account/admindash.html")
-    return render(request,"Account/profile.html")
+        return render(request,"Account/admindash.html",{"all_users": all_users})
+    elif request.user.role == 'TEACHER':
+        t_prof=TeacherProfile.objects.get(teacher=request.user)
+        context={
+            'profile':t_prof,
+            "all_users": all_users
+        }
+        
+        return render(request,"Account/profile.html",context)
+    else:
+        profile = StudentProfile.objects.get(student=request.user)
+        assignment = CreateAssignment.objects.filter(sems=profile.sem)
+        sem = Semester.objects.get(id=profile.sem.id)
+        courses = sem.courses.all()
+        context={
+            'profile':profile ,
+            'posts': posts,
+            'assignments': assignment,
+            'courses': courses,
+            "all_users": all_users,
+
+        }
+    
+        return render(request,"Account/profile.html",context)
+
+def OthersProfile(request,pk):
+    all_users = User.objects.all()
+    userprofile = User.objects.get(id=pk)
+    posts = BlogPost.objects.filter(user=userprofile).all()
+    context={
+        "all_users": all_users,
+        "userprofile": userprofile,
+        'posts':posts,
+        }
+    if userprofile.role=='TEACHER':
+        teacher_profile = TeacherProfile.objects.filter(teacher=userprofile).all()
+        context['teacher_profile']=teacher_profile
+        
+    elif userprofile.role=="STUDENT":
+        student_profile =StudentProfile.objects.filter(student=userprofile).all()
+        print(student_profile)
+        context['student_profile'] = student_profile
+    return render(request,"Account/othersprofile.html",context)
 
 def Dashboard(request):
     return render(request,"Account/dashboard.html")
@@ -133,5 +177,5 @@ def Courses(request):
     return render(request,"Account/courses.html")
 
 def Camera(request):
-    return render(request, 'Account/camera.html')
+    return render(request, 'attendance/takeattendance.html')
 
