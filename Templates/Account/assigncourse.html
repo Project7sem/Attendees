@@ -1,0 +1,55 @@
+{% include "Account/base.html" %}
+{% load static %}
+
+{% block title %}
+  <title>Attendees| User Profile</title>
+{% endblock title %}
+
+  <link rel="stylesheet" href="{% static 'plugins/fontawesome-free/css/all.min.css' %}">
+  <link rel="stylesheet" href="{% static 'dist/css/main.css' %}">
+
+  {% include 'Account/admin_navbar.html' %}
+
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+
+
+{% block content %}
+<div class="content-wrapper">
+    <div class="container">
+  <div class="row justify-content-center">
+    <div class="col-sm-6">
+        {% if message %}
+            <p>{{ message }}</p>
+        {% endif %}
+      <form method="POST" class="mx-auto"> {% csrf_token %}
+        
+
+        <div class="form-group">
+            <label for="teacher">Teacher list </label>
+            <select class="form-control" id="teacher" name="teacher">
+                <option >select option </option>
+                    {{ teachers }}
+                    {% for tech in teachers.teacher.all %}
+                        <option>{{ tech }} </option>
+                    {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            
+            {% for course in courses %}
+            <input type="checkbox" id="coursename" name="coursename">
+            <label for="coursename">{{ course }} </label>
+            {% endfor %}
+          </div>
+
+        <button type="submit" class="btn btn-primary">Add Course</button>
+      </form>
+    </div>
+  </div>
+</div>
+</div>
+
+{% endblock %}
+</div>
+</body>

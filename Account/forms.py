@@ -1,10 +1,16 @@
 
 from django import forms
-from .models import User
+from .models import User, Courses
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm
 
 
+
+
+class CourseForm(forms.ModelForm):
+    class Meta:
+        model = Courses
+        fields=("__all__")
 
 # Creates user Registration form 
 class RegistrationForm(UserCreationForm):
@@ -23,6 +29,7 @@ class RegistrationForm(UserCreationForm):
         super(RegistrationForm, self).__init__(*args, **kwargs)
         for field in (self.fields['email'],self.fields['username'],self.fields['password1'],self.fields['password2']):
             field.widget.attrs.update({'class': 'form-control '})
+
 
 
 # Creates Login form

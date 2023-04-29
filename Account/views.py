@@ -1,14 +1,13 @@
 from django.shortcuts import render,redirect
-from .forms import RegistrationForm, LoginForm
+from .forms import RegistrationForm, LoginForm, CourseForm
 from django.contrib.auth import authenticate, login, logout
-from .models import User,Teacher,Student,TeacherProfile, StudentProfile, Semester, Courses
+from .models import User,Teacher,Student,TeacherProfile, StudentProfile, Semester, Courses, Faculty
 from django.contrib.auth.hashers import make_password
 from Posts.models import BlogPost
 from Assignements.models import CreateAssignment
+from Enrolled.models import StudentEnrolled, TeacherEnrolled, AssignCourse
 # Create your views here.
 
-def Home(request):
-    return render(request, "Account/homepage.html")
 
 
 
@@ -21,12 +20,17 @@ def StudentRegistration(request):
         last_name = request.POST.get("lname")
         password = request.POST.get("password")
         confirm_password = request.POST.get("c_password")
-        print(email,username)
+        faculty = request.POST.get("faculty")
+        print(email,username,faculty)
         if password == confirm_password:
             password = make_password(password)
             reg_user = Student.objects.create(email=email,username=username,password=password)
             reg_user.save()
             if reg_user:
+                std_faculty = Faculty.objects.filter(name=faculty).first()
+                std_enroll=StudentEnrolled.objects.create(college_admin=request.user, faculty= std_faculty)
+                std_enroll.students.add(reg_user)
+                std_enroll.save()
                 context['message'] = "User registred successfully"
                 return redirect("login")
             else:
@@ -46,11 +50,15 @@ def TeacherRegistration(request):
         username = request.POST.get("username")
         password = request.POST.get("password")
         confirm_password = request.POST.get("c_password")
+        
         if password == confirm_password:
             password = make_password(password)
             reg_user = Teacher.objects.create(email=email,username=username,password=password)
             reg_user.save()
             if reg_user:
+                teacher_enroll=TeacherEnrolled.objects.create(college_admin=request.user)
+                teacher_enroll.teacher.add(reg_user)
+                teacher_enroll.save()
                 context['message'] = "User registred successfully"
                 return redirect("login")
             else:
@@ -126,7 +134,14 @@ def Profile(request):
     posts = BlogPost.objects.filter(user=request.user).all()
     all_users = User.objects.all()
     if request.user.role == 'ADMIN':
-        return render(request,"Account/admindash.html",{"all_users": all_users})
+        context={
+            "adminUser": request.user,
+            "posts": posts,
+            "student_details": StudentEnrolled.objects.filter(college_admin=request.user).all(),
+            "teacher_details": TeacherEnrolled.objects.filter(college_admin=request.user).all(),
+
+        }
+        return render(request,"Account/adminprofile.html",context)
     elif request.user.role == 'TEACHER':
         t_prof=TeacherProfile.objects.get(teacher=request.user)
         context={
@@ -168,14 +183,56 @@ def OthersProfile(request,pk):
         student_profile =StudentProfile.objects.filter(student=userprofile).all()
         print(student_profile)
         context['student_profile'] = student_profile
+    elif userprofile.role=="ADMIN":
+        context['admin_profile'] = userprofile
     return render(request,"Account/othersprofile.html",context)
 
 def Dashboard(request):
     return render(request,"Account/dashboard.html")
 
-def Courses(request):
-    return render(request,"Account/courses.html")
 
-def Camera(request):
-    return render(request, 'attendance/takeattendance.html')
+
+def AddCourse(request):
+    faculties = Faculty.objects.all()
+    context={
+            "faculties" : faculties,
+        }
+    if request.user.role == 'ADMIN':
+        if request.method=="POST":
+            course = request.POST.get("coursename")
+            faculty = request.POST.get("faculty")
+            check_faculty = Faculty.objects.filter(name=faculty).first()
+            add_course = Courses.objects.create(name=course,faculty=check_faculty)
+            if add_course:
+                add_course.save()
+                context['message']= "Course added sucessfully"
+                return render(request, "Account/addcourse.html",context )
+            else:
+                context['message']="Cannot create course"
+                return render(request, "Account/addcourse.html",context )
+        else:
+            return render(request, "Account/addcourse.html",context)
+
+def Assign(request):
+    teachers_list = TeacherEnrolled.objects.filter(college_admin=request.user).all()
+    course_list = Courses.objects.all()
+    context={
+            "teachers" : teachers_list,
+            "courses" : course_list
+        }
+    if request.user.role == 'ADMIN':
+        if request.method=="POST":
+            form_course = request.POST.get("coursename")
+            form_teacher = request.POST.get("teacher")
+            assigning = AssignCourse.objects.create(teacher=form_teacher)
+            if assigning:
+                add_course.course.add(form_course)
+                context['message']= "Course assigned successfull"
+                return render(request, "Account/assigncourse.html",context )
+            else:
+                context['message']="Cannot assing  course"
+                return render(request, "Account/assigncourse.html",context )
+        else:
+            return render(request, "Account/assigncourse.html",context)
+
 

@@ -33,10 +33,10 @@
                 {% if student_profile %}       
                     {% for students in student_profile %}   
 
-                        <h3 class="profile-username text-center"><img src="/media/{{ students.student.profile_pics }}" alt="{{ students.student.profile_pics }}" height=40 width=40>{{ students.student.username }}</h3>
+                        <h3 class="profile-username text-center"><img class="img-circle img-bordered-sm" src="/media/{{ students.student.profile_pics }}" alt="{{ students.student.profile_pics }}" height=40 width=40>{{ students.student.username }}</h3>
                         {% if  students.student.id != request.user.id %}
                         <center><a href="{% url 'room' user.username  %}"><button type="button" class="btn btn-light btn-sm"><i class="fas fa-envelope-square"></i>
-                            Compose Message
+                            Send Message
                         </button> </a> 
                         </center><br>
                         {% endif %}
@@ -104,7 +104,7 @@
                     
                           </div>
                           <p>
-                            {{ post.caption }}    <a href="">see details ..</a> 
+                            {{ post.caption }}    <a href="{% url 'postdetails' post.id %}">see details ..</a> 
                           </p>
 
                           <p>
@@ -139,10 +139,10 @@
                 {% if teacher_profile %}  
                 {% for teachers in teacher_profile %}  
                           
-                <h3 class="profile-username text-center"><img src="/media/{{ students.student.profile_pics }}" alt="{{ students.student.profile_pics }}" height=40 width=40>{{ teachers.teacher.username }}</h3>
+                <h3 class="profile-username text-center"><img class="img-circle img-bordered-sm" src="/media/{{ students.student.profile_pics }}" alt="{{ students.student.profile_pics }}" height=40 width=40>{{ teachers.teacher.username }}</h3>
                 {% if  teachers.teacher.id != request.user.id %}
                   <center><a href="{% url 'room' user.username  %}"><button type="button" class="btn btn-light btn-sm"><i class="fas fa-envelope-square"></i>
-                    Compose Message
+                    Send Message
                   </button> </a> 
                 </center><br>
                 {% endif %}
@@ -197,10 +197,9 @@
                               <a href="#"><b>{{ request.user.username }}</b></a>
                               <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
                             </span><br>
-                            <span> You posted recently</span>
                           </div>
                           <p>
-                            {{ post.caption }}    <a href="">see details ..</a> 
+                            {{ post.caption }}    <a href="{% url 'postdetails' post.id %}">see details ..</a> 
                           </p>
 
                           <p>
@@ -211,6 +210,118 @@
                         {% endfor %}
                   </div>
 
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+  {% elif request.user.is_authenticated and admin_profile %}
+
+     <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-3">
+
+            <div class="card card-primary card-outline">
+              <div class="card-body box-profile">
+                <div class="text-center"> 
+                </div>
+                {% if admin_profile %}   
+                          
+                <h3 class="profile-username text-center"><img class="img-circle img-bordered-sm" src="/media/{{ admin_profile.profile_pics }}" alt="{{ admin_profile.profile_pics }}" height=40 width=40>{{ admin_profile.username }}</h3>
+                {% if  admin.id != request.user.id %}
+                  <center><a href="{% url 'room' user.username  %}"><button type="button" class="btn btn-light btn-sm"><i class="fas fa-envelope-square"></i>
+                    Send Message
+                  </button> </a> 
+                </center><br>
+                {% endif %}
+              
+                <ul class="list-group list-group-unbordered mb-3">
+                  <li class="list-group-item">
+                    <b>Location</b> <a class="float-right">{{ admin_profile.institute.location }}</a>
+                   </li>
+                   <li class="list-group-item">
+                   <b>Phone Number</b> <a class="float-right">{{ admin_profile.institute.phone }}</a>
+                   </li>
+  
+                   <li class="list-group-item">
+                   <b>Email</b> <a class="float-right">{{ admin_profile.email }}</a>
+                   </li>
+                  
+                </ul>
+              {% endif %}
+              </div>
+            </div> 
+          </div>
+
+          <div class="col-md-9">
+            <div class="card">
+              <div class="card-header p-2">
+                <ul class="nav nav-pills">
+                  <li class="nav-item"><a class="nav-link" href="#contact" data-toggle="tab">About</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#faculty" data-toggle="tab">Faculty</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#activity" data-toggle="tab">Activity</a></li>
+                </ul>
+              </div>
+              <div class="card-body">
+                <div class="tab-content">
+
+                  <div class="active tab-pane" id="contact">
+                    <div class="post">
+                    <div class="post clearfix">
+                      <div class="user-block">
+                          <p>We provide quality education.</p>
+                      </div>
+                    </div>
+                    </div>
+                  </div>
+
+                  <div class=" tab-pane" id="faculty">
+                    {% for post in posts %}
+                        <div class="post">
+                          <div class="user-block">
+                            <span>
+                              <a href="#"><b>{{ admin_profile.username }}</b></a>
+                              <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
+                            </span><br>
+                          </div>
+                          <p>
+                            {{ post.caption }}  <a href="{% url 'postdetails' post.id %}">see details ..</a> 
+                          </p>
+
+                          <p>
+                            <a href="#" class="link-black text-sm mr-2"><i class="fas fa-share mr-1"></i> Share</a>
+                            <a href="#" class="link-black text-sm"><i class="far fa-thumbs-up mr-1"></i> {{ post.likes.count }}</a>
+                          </p>
+                        </div>
+                        {% endfor %}
+                  </div> 
+
+                  <div class=" tab-pane" id="activity">
+                    {% for post in posts %}
+                        <div class="post">
+                          <div class="user-block">
+                            <span>
+                              <a href="#"><b>{{ admin_profile.username }}</b></a>
+                              <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
+                            </span><br>
+                          </div>
+                          <p>
+                            {{ post.caption }}  <a href="{% url 'postdetails' post.id %}">see details ..</a> 
+                          </p>
+
+                          <p>
+                            <a href="#" class="link-black text-sm mr-2"><i class="fas fa-share mr-1"></i> Share</a>
+                            <a href="#" class="link-black text-sm"><i class="far fa-thumbs-up mr-1"></i> {{ post.likes.count }}</a>
+                          </p>
+                        </div>
+                        {% endfor %}
+                  </div>
+                
                 </div>
               </div>
             </div>

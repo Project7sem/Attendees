@@ -1,44 +1,80 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Camera Feed</title>
-</head>
-<body>
-    <h1>Camera Feed</h1>
-    <canvas id="canvas"></canvas>
-    <script>
-        // Get the canvas element
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
+{% extends "Account/base.html" %}
 
-        // Define the URL to retrieve the camera feed from
-        const url = '{% url "attendance" %}';
 
-        // Define a function to draw each frame onto the canvas
-        function drawFrame(frame) {
-            const img = new Image();
-            img.src = URL.createObjectURL(frame);
-            img.onload = () => {
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                URL.revokeObjectURL(frame);
+{% block content %}
+<center>
+    <h1> Today's Attendance Details </h1>
+    <h5> {{ today }} </h5> 
+    
+    <br> 
+    {% if attendees %}
+    <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Uid</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Semester</th>
+              <th>Faculty</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+        {% for attendee in attendees %}
+        
+              <tbody>
+                <tr>
+                  <td>{{attendee.user.id}}</td>
+                  <td>{{attendee.taken_on|date:"Y-m-d " }}</td>
+                  <td>{{attendee.taken_on|time:"H : i " }}</td>
+                  <td>{{attendee.user.username}}</td>
+                  <td>{{attendee.user.email}}</td>
+                  <td>{{attendee.semester.sem_name}}</td>
+                  <td>{{attendee.semester.faculty}}</td>
+                  <td>{{attendee.status}}</td>
+                </tr>
+              </tbody>
+
+        {% endfor %}
+        </table>
+        </div>
+    {% endif %}
+    <canvas id="canvas" width="400" height="400"></canvas>
+</center>
+<script>
+    // Get the canvas element
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    // Define the URL to retrieve the camera feed from
+    const url = '{% url "attendance" %}';
+
+    // Define a function to draw each frame onto the canvas
+    function drawFrame(frame) {
+        const img = new Image();
+        img.src = URL.createObjectURL(frame);
+        img.onload = () => {
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            URL.revokeObjectURL(frame);
+        };
+    }
+
+    // Use Fetch API to retrieve each frame from the server
+    fetch(url)
+        .then(response => response.body)
+        .then(body => {
+            const reader = body.getReader();
+            const pump = () => {
+                reader.read().then(({done, value}) => {
+                    if (!done) {
+                        drawFrame(value);
+                        pump();
+                    }
+                });
             };
-        }
-
-        // Use Fetch API to retrieve each frame from the server
-        fetch(url)
-            .then(response => response.body)
-            .then(body => {
-                const reader = body.getReader();
-                const pump = () => {
-                    reader.read().then(({done, value}) => {
-                        if (!done) {
-                            drawFrame(value);
-                            pump();
-                        }
-                    });
-                };
-                pump();
-            });
-    </script>
-</body>
-</html>
+            pump();
+        });
+</script>
+{% endblock %}

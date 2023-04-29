@@ -170,7 +170,7 @@
           
 
                 {% if profile %}                
-                <h3 class="profile-username text-center"> <img src="/media/{{ profile.teacher.profile_pics }}" alt="{{ profile.teacher.profile_pics }}" height=40 width=40>{{ request.user.username }}</h3>
+                <h3 class="profile-username text-center"> <img class="img-circle img-bordered-sm" src="/media/{{ profile.teacher.profile_pics }}" alt="{{ profile.teacher.profile_pics }}" height=40 width=40>{{ request.user.username }}</h3>
                 {% if  profile.teacher.id != request.user.id %}
                   <center><a href="{% url 'room' user.username  %}"><button type="button" class="btn btn-light btn-sm"><i class="fas fa-envelope-square"></i>
                     Compose Message

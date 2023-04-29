@@ -9,8 +9,8 @@ urlpatterns = [
     path("logout/", views.Logout, name='logout'),
     path("profile/", views.Profile, name="profile"),
     path("dashboard/", views.Dashboard, name="dashboard"),
-    path("course/",views.Courses, name='course'),
-    path("camera/",views.Camera, name='camera'),
     path("othersprofile/<int:pk>",views.OthersProfile, name="othersprofile"),
+    path("addcourse/",views.AddCourse,name="addcourse"),
+    path("assign/", views.Assign,name="assign"),
 
 ]

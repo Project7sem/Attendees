@@ -2,10 +2,22 @@ from django.shortcuts import render
 import cv2
 import numpy as np
 import os
+import datetime
 from keras.models import load_model
 import tensorflow as tf
 from tensorflow import keras
 from django.http import HttpResponse
+from .models import AttendanceDetails
+from Account.models import User,Semester
+
+
+def start_attendance(request):
+    attendees = AttendanceDetails.objects.all()
+    context = {
+        "attendees":attendees,
+        "today": datetime.date.today()
+    }
+    return render(request,"Attendance/takeattendance.html",context)
 
 
 
@@ -17,7 +29,7 @@ def take_attendance(request):
     model = load_model('my_model.h5')
 
 
-    count = 0
+    count_val = 0
     output=[]
 
     while True:
@@ -51,7 +63,7 @@ def take_attendance(request):
                 label = "Rojina"
 
 
-            count+=1
+            count_val+=1
 
 
             #Drawing a rectangle around face
@@ -69,15 +81,25 @@ def take_attendance(request):
 
         cv2.imshow("Video capture",frame)
         
-        if count==10:
+        if count_val==10:
             break
 
         if cv2.waitKey(20) & 0xFF == ord('q'):
                 break
+    label_count = output.count(label)
+    print(label_count)
+    if label_count>5:
+        print(f"{label} is present ")
+        check_user = User.objects.filter(username=label).first()
+        sem = Semester.objects.get(id=1)
+        print(check_user)
+        AttendanceDetails.objects.create(user=request.user,semester=sem)
+        if check_user:
+            AttendanceDetails.objects.create(user=request.user)
 
     cap.release()
     cv2.destroyAllWindows()
-    return HttpResponse(request, "<h1>attendance marked sucessfull </h1>")
+    return HttpResponse(request, "<h1>attendance marked sucessfully </h1>")
 
 
     
