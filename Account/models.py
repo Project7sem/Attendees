@@ -56,7 +56,7 @@ class User(AbstractBaseUser):
     #Defines email is in username field.
     USERNAME_FIELD = ('email')
 
-    #Username is required
+    #Username is required 
     REQUIRED_FIELDS = ['username']
 
     objects = MyAccountManager()
@@ -149,7 +149,7 @@ class Faculty(models.Model):
 
     def __str__(self):
         return self.name
-
+hon 
 class Courses(models.Model):
     name = models.CharField(max_length=50)
     faculty = models.ForeignKey("Faculty", on_delete=models.CASCADE)
