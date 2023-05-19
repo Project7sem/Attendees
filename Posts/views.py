@@ -5,13 +5,16 @@ from Account.models import User
 
 
 def ViewPosts(request):
-    all_posts = BlogPost.objects.all()
-    cforms = CommentsForm()
-    context= {
-        'all_posts' : all_posts,
-        'all_users' : User.objects.all()
-    }
-    return render( request, "Account/homepage.html", context)
+    if request.user.is_authenticated:
+        all_posts = BlogPost.objects.all()
+        cforms = CommentsForm()
+        context= {
+            'all_posts' : all_posts,
+            'all_users' : User.objects.all()
+        }
+        return render( request, "Account/homepage.html", context)
+    else:
+        return redirect("login")
 
 
 def like_post(request, pk):

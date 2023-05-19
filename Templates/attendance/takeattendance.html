@@ -1,46 +1,24 @@
-{% extends "Account/base.html" %}
+{% include "Account/base.html" %}
+{% load static %}
+
+{% block title %}
+  <title>Attendance details</title>
+{% endblock title %}
+
+  <link rel="stylesheet" href="{% static 'plugins/fontawesome-free/css/all.min.css' %}">
+  <link rel="stylesheet" href="{% static 'dist/css/main.css' %}">
+
+  {% include 'Account/admin_navbar.html' %}
+
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
 
 
 {% block content %}
 <center>
-    <h1> Today's Attendance Details </h1>
-    <h5> {{ today }} </h5> 
+    <h5> {{ message }} </h5> 
     
     <br> 
-    {% if attendees %}
-    <div class="table-responsive">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Uid</th>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Username</th>
-              <th>Email</th>
-              <th>Semester</th>
-              <th>Faculty</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-        {% for attendee in attendees %}
-        
-              <tbody>
-                <tr>
-                  <td>{{attendee.user.id}}</td>
-                  <td>{{attendee.taken_on|date:"Y-m-d " }}</td>
-                  <td>{{attendee.taken_on|time:"H : i " }}</td>
-                  <td>{{attendee.user.username}}</td>
-                  <td>{{attendee.user.email}}</td>
-                  <td>{{attendee.semester.sem_name}}</td>
-                  <td>{{attendee.semester.faculty}}</td>
-                  <td>{{attendee.status}}</td>
-                </tr>
-              </tbody>
-
-        {% endfor %}
-        </table>
-        </div>
-    {% endif %}
     <canvas id="canvas" width="400" height="400"></canvas>
 </center>
 <script>
@@ -78,3 +56,6 @@
         });
 </script>
 {% endblock %}
+
+</div>
+</body>

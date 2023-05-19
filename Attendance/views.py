@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 import cv2
 import numpy as np
 import os
@@ -9,16 +9,23 @@ from tensorflow import keras
 from django.http import HttpResponse
 from .models import AttendanceDetails
 from Account.models import User,Semester
-
+from statistics import mode
 
 def start_attendance(request):
-    attendees = AttendanceDetails.objects.all()
     context = {
-        "attendees":attendees,
-        "today": datetime.date.today()
+        "message" : "Attendance is in process. Please face to the camera for better recognization."
     }
     return render(request,"Attendance/takeattendance.html",context)
 
+
+def DetailAttenden(request):
+    todays = datetime.date.today()
+    attendees = AttendanceDetails.objects.filter(taken_on__date=todays).all()
+    context = {
+        "attendees":attendees,
+        "today": todays
+    }
+    return render(request,"Attendance/attendancedetails.html",context)
 
 
 def take_attendance(request):
@@ -29,7 +36,7 @@ def take_attendance(request):
     model = load_model('my_model.h5')
 
 
-    count_val = 0
+    count = 0
     output=[]
 
     while True:
@@ -51,19 +58,54 @@ def take_attendance(request):
             
             # Make a prediction on the face image using the trained model
             prediction = model.predict(face_img.reshape(1, 64, 64, 1))
-            probvalue = np.amax(prediction)
+            probvalue = np.amax(prediction) 
 
-            if np.argmax(prediction)==0:
-                label = "Rabindra"
             
-            elif np.argmax(prediction)==1:
-                label = "Riju"
+                
             
-            elif np.argmax(prediction)==2:
-                label = "Rojina"
+            class_labels = np.argmax(prediction, axis=1)
+            print(class_labels)
+            print(int(probvalue*100))
+            if int(probvalue*100)>=95:
+                if np.argmax(prediction)==0:
+                    label = "Bibek"
+                    
+                elif np.argmax(prediction)==1:
+                    label = "Dipak"
+                    
+                elif np.argmax(prediction)==2:
+                    label = "Kabita"
+                    
+                elif np.argmax(prediction)==3:
+                    label = "Nitesh"
+                    
+                elif np.argmax(prediction)==4:
+                    label = "Prabhat"
+                    
+                elif np.argmax(prediction)==5:
+                    label = "Rabindra"
+                    
+                elif np.argmax(prediction)==6:
+                    label = "Riju"
+                    
+                elif np.argmax(prediction)==7:
+                    label = "Rojina"
+                    
+                elif np.argmax(prediction)==8:
+                    label = "Sagar"
+                    
+                elif np.argmax(prediction)==9:
+                    label = "Simran"
+                    
+                elif np.argmax(prediction)==10:
+                    label = "Yujan"
+                    
+                count+=1
+                output.append(label)
+                        
+            else:
+                label="Unkown"
 
-
-            count_val+=1
 
 
             #Drawing a rectangle around face
@@ -73,33 +115,40 @@ def take_attendance(request):
             height = y+h
             cv2.rectangle(frame,(x,y),(width,height),color,stroke)
             cv2.putText(frame, str(label), (x, y-10), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
-            cv2.putText(frame,str(round(probvalue*100,2))+"%",(180,75),cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
-            print(label)
-            output.append(label)
+            cv2.putText(frame,str(int(probvalue*100))+"%",(180,75),cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+    
 
 
 
         cv2.imshow("Video capture",frame)
         
-        if count_val==10:
+        if count==20:
             break
 
         if cv2.waitKey(20) & 0xFF == ord('q'):
                 break
-    label_count = output.count(label)
-    print(label_count)
-    if label_count>5:
-        print(f"{label} is present ")
-        check_user = User.objects.filter(username=label).first()
+
+    predicted_user = mode(output)
+    todays = datetime.date.today()
+    if predicted_user:
+        check_user = User.objects.filter(username=predicted_user).first()
         sem = Semester.objects.get(id=1)
-        print(check_user)
-        AttendanceDetails.objects.create(user=request.user,semester=sem)
         if check_user:
-            AttendanceDetails.objects.create(user=request.user)
+            atten = AttendanceDetails.objects.filter(user=check_user, taken_on__date=todays).exists()
+            if not atten:
+                AttendanceDetails.objects.create(user=check_user,semester=sem)
+                
+            else:
+                print("User already exitst")
+                return redirect("details")
+
+        else:
+            print("User is not found please create user.")
+            return redirect("stdregister")
 
     cap.release()
     cv2.destroyAllWindows()
-    return HttpResponse(request, "<h1>attendance marked sucessfully </h1>")
+    return redirect('details')
 
 
     
