@@ -1,0 +1,32 @@
+version: "3.9"
+services:
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres123
+      - POSGTGRES_DB=Attendees
+    
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: attendees:v1
+    ports:
+      - "8000:8000"
+    environment:
+      - POSTGRES_HOS=db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres123
+      - POSGTGRES_DB=Attendees
+
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
+   

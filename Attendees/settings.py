@@ -95,6 +95,14 @@ DATABASES = {
         'USER': 'sysadmin',
         'PASSWORD':'sysadmin123',
     }
+    #   'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': 'postgres',
+    #     'USER': 'postgres',
+    #     'PASSWORD':'postgres123',
+    #     'HOST': db,
+    #     "PORT": 5432
+    # }
 }
 
 
